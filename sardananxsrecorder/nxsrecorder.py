@@ -1031,8 +1031,10 @@ class NXS_FileRecorder(BaseFileRecorder):
                         self.__macro().warning(
                             "NXS_FileRecorder: %s does not exist" % msf)
                 else:
-                    from importlib.machinery import SourceFileLoader
-                    msm = SourceFileLoader('', msf).load_module()
+                    import importlib.util
+                    spec = importlib.util.spec_from_file_location('', msf)
+                    msm = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(msm)
                     ms = msm.main()
                     if not isinstance(ms, dict):
                         self.warning(
