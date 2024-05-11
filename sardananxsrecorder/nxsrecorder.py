@@ -956,10 +956,13 @@ class NXS_FileRecorder(BaseFileRecorder):
                 if appendentry else ""
             self.__vars["vars"]["scan_id"] = envRec["serialno"]
             self.__vars["vars"]["scan_title"] = envRec["title"]
-            if hasattr(self.macro, "integ_time"):
-                self.__vars["vars"]["count_time"] = self.macro.integ_time
-            if hasattr(self.macro, "nb_points"):
-                self.__vars["vars"]["npoints"] = self.macro.nb_points
+            if self.__macro:
+                if hasattr(self.__macro(), "integ_time"):
+                    self.__vars["vars"]["count_time"] = \
+                        self.__macro().integ_time
+                if hasattr(self.__macro(), "nb_points"):
+                    self.__vars["vars"]["npoints"] = \
+                        self.__macro().nb_points
             self.__vars["vars"]["beamtime_id"] = self.beamtimeid()
             tzone = self.__getConfVar("TimeZone", self.__timezone)
             self.__vars["data"]["start_time"] = \
@@ -975,10 +978,13 @@ class NXS_FileRecorder(BaseFileRecorder):
 
             self.__vars["data"]["serialno"] = envRec["serialno"]
             self.__vars["data"]["scan_title"] = envRec["title"]
-            if hasattr(self.macro, "integ_time"):
-                self.__vars["data"]["count_time"] = self.macro.integ_time
-            if hasattr(self.macro, "nb_points"):
-                self.__vars["data"]["npoints"] = self.macro.nb_points
+            if self.__macro:
+                if hasattr(self.__macro(), "integ_time"):
+                    self.__vars["data"]["count_time"] = \
+                        self.__macro().integ_time
+                if hasattr(self.__macro(), "nb_points"):
+                    self.__vars["data"]["npoints"] = \
+                        self.__macro().nb_points
             self.__vars["data"]["beamtime_id"] = \
                 self.__vars["vars"]["beamtime_id"]
 
