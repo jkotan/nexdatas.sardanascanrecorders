@@ -508,7 +508,7 @@ class NXS_FileRecorder(BaseFileRecorder):
                     self.__nexuswriter_device = None
                     self.warning("Cannot connect to '%s' " % servers[0])
                     if self.__macro:
-                        self.__macro().Wwarning(
+                        self.__macro().warning(
                             "Cannot connect to '%s'" % servers[0])
             else:
                 self.__nexuswriter_device = None
@@ -956,6 +956,14 @@ class NXS_FileRecorder(BaseFileRecorder):
                 if appendentry else ""
             self.__vars["vars"]["scan_id"] = envRec["serialno"]
             self.__vars["vars"]["scan_title"] = envRec["title"]
+            if self.__macro:
+                if hasattr(self.__macro(), "integ_time"):
+                    self.__vars["vars"]["count_time"] = \
+                        self.__macro().integ_time
+                if hasattr(self.__macro(), "nb_points"):
+                    self.__vars["vars"]["npoints"] = \
+                        self.__macro().nb_points
+            self.__vars["vars"]["beamtime_id"] = self.beamtimeid()
             tzone = self.__getConfVar("TimeZone", self.__timezone)
             self.__vars["data"]["start_time"] = \
                 self.__timeToString(envRec['starttime'], tzone)
@@ -970,6 +978,15 @@ class NXS_FileRecorder(BaseFileRecorder):
 
             self.__vars["data"]["serialno"] = envRec["serialno"]
             self.__vars["data"]["scan_title"] = envRec["title"]
+            if self.__macro:
+                if hasattr(self.__macro(), "integ_time"):
+                    self.__vars["data"]["count_time"] = \
+                        self.__macro().integ_time
+                if hasattr(self.__macro(), "nb_points"):
+                    self.__vars["data"]["npoints"] = \
+                        self.__macro().nb_points
+            self.__vars["data"]["beamtime_id"] = \
+                self.__vars["vars"]["beamtime_id"]
 
             if hasattr(self.__nexuswriter_device, 'Init'):
                 self.__command(self.__nexuswriter_device, "Init")
@@ -1166,19 +1183,21 @@ class NXS_FileRecorder(BaseFileRecorder):
                 pass
         return result
 
+    def beamtimeid(self):
+        bmtfpath = self.__getEnvVar("BeamtimeFilePath", "/gpfs/current")
+        bmtfprefix = self.__getEnvVar(
+            "BeamtimeFilePrefix", "beamtime-metadata-")
+        bmtfext = self.__getEnvVar("BeamtimeFileExt", ".json")
+        beamtimeid = self.beamtime_id(bmtfpath, bmtfprefix, bmtfext)
+        return beamtimeid or "00000000"
+
     def __appendSciCatDataset(self, hostname=None):
         """ append dataset to SciCat ingestion list """
 
         fdir, fname = os.path.split(self.filename)
         _, bfname = os.path.split(self.__base_filename)
         sname, fext = os.path.splitext(fname)
-
-        bmtfpath = self.__getEnvVar("BeamtimeFilePath", "/gpfs/current")
-        bmtfprefix = self.__getEnvVar(
-            "BeamtimeFilePrefix", "beamtime-metadata-")
-        bmtfext = self.__getEnvVar("BeamtimeFileExt", ".json")
-        beamtimeid = self.beamtime_id(bmtfpath, bmtfprefix, bmtfext)
-        beamtimeid = beamtimeid or "00000000"
+        beamtimeid = self.beamtimeid()
         defprefix = "scicat-datasets-"
         defaulthost = self.__getEnvVar("SciCatDatasetListFileLocal", None)
         if defaulthost:
