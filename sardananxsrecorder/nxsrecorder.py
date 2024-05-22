@@ -1233,7 +1233,7 @@ class NXS_FileRecorder(BaseFileRecorder):
             scanname, _ = os.path.splitext(bfname)
 
         if appendentry is True:
-            sid = self.__getEnvVar("ScanID", 0)
+            sid = self.__vars["vars"]["scan_id"]
             sname = "%s::/%s_%05i;%s_%05i" % (
                 scanname, entryname, sid, scanname, sid)
 
@@ -1290,6 +1290,10 @@ class NXS_FileRecorder(BaseFileRecorder):
         variables = self.__getConfVar("ConfigVariables", None, True)
         if isinstance(variables, dict) and "entryname" in variables:
             entryname = variables["entryname"]
+        if appendentry is True:
+            sid = self.__vars["vars"]["scan_id"]
+            entryname = entryname + ("_%05i" % sid)
+            sname = sname + ("_%05i" % sid)
 
         mntname = scanname
         if fdir in sm.keys() and sm[fdir]:
@@ -1304,7 +1308,7 @@ class NXS_FileRecorder(BaseFileRecorder):
                 fl = h5writer.open_file(mntfile, readonly=False)
             rt = fl.root()
             if sname not in rt.names():
-                h5writer.link("%s:/%s" % (self.filename, entryname), rt, sname)
+                h5writer.link("%s:/%s" % (fname, entryname), rt, sname)
                 self.debug("Link  '%s' in '%s' created " % (sname, mntname))
             rt.close()
             fl.close()
