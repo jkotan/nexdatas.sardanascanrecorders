@@ -952,7 +952,7 @@ class NXS_FileRecorder(BaseFileRecorder):
             appendentry = not self.__setFileName(
                 self.__base_filename, not appendentry)
             envRec = self.recordlist.getEnviron()
-            self.__vars["vars"]["serialno"] = envRec["serialno"] \
+            self.__vars["vars"]["serialno"] = ("_%05i" % envRec["serialno"]) \
                 if appendentry else ""
             self.__vars["vars"]["scan_id"] = envRec["serialno"]
             self.__vars["vars"]["scan_title"] = envRec["title"]
@@ -1222,7 +1222,7 @@ class NXS_FileRecorder(BaseFileRecorder):
 
         if appendentry is True:
             sid = self.__getEnvVar("ScanID", 0)
-            sname = "%s::/%s%i;%s_%05i" % (
+            sname = "%s::/%s_%05i;%s_%05i" % (
                 scanname, entryname, sid, scanname, sid)
 
         # auto grouping
