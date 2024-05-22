@@ -35,6 +35,15 @@ try:
 except Exception:
     import PyTango as tango
 
+try:
+    NXSWRITER = True
+    try:
+        from nxstools import h5cppwriter as h5writer
+    except Exception:
+        from nxstools import h5pywriter as h5writer
+except Exception:
+    NXSWRITER = False
+
 
 from sardana.macroserver.scan.recorder.storage import BaseFileRecorder
 
@@ -1157,6 +1166,9 @@ class NXS_FileRecorder(BaseFileRecorder):
             vl = self.__getEnvVar("NXSAppendSciCatDataset", None)
             if vl:
                 self.__appendSciCatDataset(vl)
+            cmf = self.__getEnvVar("CreateMeasurementFile", False)
+            if cmf and NXSWRITER:
+                self.__createMeasurementFile()
 
     def beamtime_id(self, bmtfpath, bmtfprefix, bmtfext):
         """ code for beamtimeid  datasource
@@ -1227,6 +1239,7 @@ class NXS_FileRecorder(BaseFileRecorder):
 
         # auto grouping
         grouping = bool(self.__getEnvVar('SciCatAutoGrouping', False))
+
         if grouping:
             commands = []
             try:
@@ -1253,6 +1266,48 @@ class NXS_FileRecorder(BaseFileRecorder):
 
         with open(dslfile, "a+") as fl:
             fl.write("\n%s" % sname)
+
+    def __createMeasurementFile(self):
+        """ create measurement file """
+
+        fdir, fname = os.path.split(self.filename)
+        _, bfname = os.path.split(self.__base_filename)
+        sname, fext = os.path.splitext(fname)
+        # beamtimeid = self.beamtimeid()
+
+        try:
+            scanname, _ = os.path.splitext(bfname % "")
+        except Exception:
+            scanname, _ = os.path.splitext(bfname)
+
+        try:
+            sm = dict(self.__getEnvVar('SciCatMeasurements', {}))
+        except Exception:
+            sm = {}
+
+        entryname = "scan"
+        appendentry = self.__getConfVar("AppendEntry", False)
+        variables = self.__getConfVar("ConfigVariables", None, True)
+        if isinstance(variables, dict) and "entryname" in variables:
+            entryname = variables["entryname"]
+
+        mntname = scanname
+        if fdir in sm.keys() and sm[fdir]:
+            mntname = sm[fdir]
+        if not appendentry or mntname != scanname:
+            mntfile = os.path.join(fdir, mntname + fext)
+
+            if not os.path.exists(mntfile):
+                fl = h5writer.create_file(mntfile)
+                self.info("Measurement file '%s' created " % mntname)
+            else:
+                fl = h5writer.open_file(mntfile, readonly=False)
+            rt = fl.root()
+            if sname not in rt.names():
+                h5writer.link("%s:/%s" % (self.filename, entryname), rt, sname)
+                self.debug("Link  '%s' in '%s' created " % (sname, mntname))
+            rt.close()
+            fl.close()
 
     def _addCustomData(self, value, name, group="data", remove=False,
                        **kwargs):
