@@ -50,7 +50,7 @@ install_requires = [
     'numpy>1.6.0',
     # 'pytango',
     # 'nxswriter',
-    # 'nxstools',  # >4.1.0 
+    # 'nxstools',  # >4.1.0
     # 'nxsconfigserver',
     # 'sardana',
     # 'taurus',
