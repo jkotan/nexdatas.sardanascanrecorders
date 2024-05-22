@@ -220,6 +220,6 @@ The NeXus file recorder uses the following sardana environment variables
 * **SciCatDatasetListFileLocal** *(bool)* - add the hostname to the scicat dataset list file extension, default: ``False``
 * **SciCatAutoGrouping** *(bool)* - group all scans with the measurement name set to the base scan filename, default: ``False``
 * **MetadataScript** *(str)* - a python module file name containing ``main()``  which provides a dictionary with user metadata stored in the INIT mode, default: ``""``
-* **ScicatMeasurements** *(dict)* - ``ScanDir`` to measurement name map used by ``scingestor``, default: ``{}``
+* **ScicatMeasurements** *(dict)* - a dictionary of  measurement names indexed by ``ScanDir`` and  used by ``scingestor``, default: ``{}``
 * **CreateMeasurementFile** *(bool)* - create a measurement file with its filename releated to ``ScicatMeasurements`` or ``ScanFile``, default: ``False``
   
