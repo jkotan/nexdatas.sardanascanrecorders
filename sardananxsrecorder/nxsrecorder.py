@@ -22,6 +22,7 @@
 
 import os
 import re
+import sys
 
 import numpy
 import json
@@ -1129,7 +1130,10 @@ class NXS_FileRecorder(BaseFileRecorder):
             tz = pytz.timezone(self.__timezone)
 
         fmt = '%Y-%m-%dT%H:%M:%S.%f%z'
-        starttime = tz.localize(mtime)
+        if sys.version_info > (3, 6):
+            starttime = mtime.replace(tzinfo=tz)
+        else:
+            starttime = tz.localize(mtime)
         return str(starttime.strftime(fmt))
 
     def _endRecordList(self, recordlist):

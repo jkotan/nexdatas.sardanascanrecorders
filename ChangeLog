@@ -1,3 +1,7 @@
+2024-05-23 Jan Kotanski <jankotan@gmail.com>
+	* replace deprecated tz.localize() with datetime.replace() (#111)
+	* tagged as 3.21.1
+
 2024-05-22 Jan Kotanski <jankotan@gmail.com>
 	* improve support for creating measurement files in appendentry mode (#108)
 	* change entryname in the appendentry mode to '%s_%05i' (#108)
