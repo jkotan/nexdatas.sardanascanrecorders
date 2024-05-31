@@ -102,6 +102,8 @@ class NXS_FileRecorder(BaseFileRecorder):
         BaseFileRecorder.__init__(self)
         #: (:obj:`str`) base filename
         self.__base_filename = filename
+        #: (:obj:`str`) raw filename
+        self.__raw_filename = ""
         self.__macro = weakref.ref(macro) if macro else None
         #: (:class:`tango.Database`) tango database
         self.__db = tango.Database()
@@ -371,20 +373,28 @@ class NXS_FileRecorder(BaseFileRecorder):
 
         subs = (len([None for _ in list(re.finditer('%', filename))]) == 1)
         # construct the filename, e.g. : /dir/subdir/etcdir/prefix_00123.nxs
-        if subs or number:
-            if scanID is None:
-                serial = self.recordlist.getEnvironValue('serialno')
-            elif scanID >= 0:
-                if isarver >= 304 or isarver == 0:
-                    serial = scanID
-                else:
-                    serial = scanID + 1
+        if scanID is None:
+            serial = self.recordlist.getEnvironValue('serialno')
+        elif scanID >= 0:
+            if isarver >= 304 or isarver == 0:
+                serial = scanID
+            else:
+                serial = scanID + 1
+
         if subs:
             try:
                 #: output file name
                 self.filename = filename % serial
             except Exception:
                 subs = False
+        if not self.__raw_filename:
+            self.__raw_filename = self.__rawfilename(serial)
+        if not subs:
+            try:
+                _ = self.__raw_filename.format(ScanID=serial)
+                subs = True
+            except Exception:
+                pass
 
         if not subs:
             if number:
@@ -1207,11 +1217,50 @@ class NXS_FileRecorder(BaseFileRecorder):
         beamtimeid = self.beamtime_id(bmtfpath, bmtfprefix, bmtfext)
         return beamtimeid or "00000000"
 
+    def __rawfilename(self, serial):
+        """ find scan name
+        """
+        try:
+            scan_file = self.macro.getEnv('ScanFile')
+        except Exception:
+            self._scan_file = ""
+        if isinstance(scan_file, str):
+            scan_file = [scan_file]
+        self._scan_file = []
+        bfilename = ""
+        for sfile in scan_file:
+            try:
+                ffile = sfile.format(ScanID=serial)
+            except KeyError:
+                ffile = sfile
+            if ffile == self.__base_filename:
+                bfilename = sfile
+                break
+        bfilename = bfilename or self.__base_filename
+        return bfilename
+
+    def __scanname(self, serial):
+        """ find scan name
+        """
+        if not self.__raw_filename:
+            self.__raw_filename = self.__rawfilename(serial)
+        bfilename = self.__raw_filename
+        _, bfname = os.path.split(bfilename)
+        if bfname.endswith(".tmp"):
+            bfname = bfname[:-4]
+        sname, fext = os.path.splitext(bfname)
+        scanname = os.path.commonprefix(
+            [sname.format(ScanID=11111111),
+             sname.format(ScanID=99999999)])
+        if scanname.endswith("_"):
+            scanname = scanname[:-1]
+        return scanname
+
     def __appendSciCatDataset(self, hostname=None):
         """ append dataset to SciCat ingestion list """
 
+        sid = self.__vars["vars"]["scan_id"]
         fdir, fname = os.path.split(self.filename)
-        _, bfname = os.path.split(self.__base_filename)
         sname, fext = os.path.splitext(fname)
         beamtimeid = self.beamtimeid()
         defprefix = "scicat-datasets-"
@@ -1231,10 +1280,13 @@ class NXS_FileRecorder(BaseFileRecorder):
         variables = self.__getConfVar("ConfigVariables", None, True)
         if isinstance(variables, dict) and "entryname" in variables:
             entryname = variables["entryname"]
-        try:
-            scanname, _ = os.path.splitext(bfname % "")
-        except Exception:
-            scanname, _ = os.path.splitext(bfname)
+
+        scanname = self.__scanname(sid)
+        # _, bfname = os.path.split(self.__base_filename)
+        # try:
+        #     scanname, _ = os.path.splitext(bfname % "")
+        # except Exception:
+        #     scanname, _ = os.path.splitext(bfname)
 
         if appendentry is True:
             sid = self.__vars["vars"]["scan_id"]
@@ -1274,15 +1326,17 @@ class NXS_FileRecorder(BaseFileRecorder):
     def __createMeasurementFile(self):
         """ create measurement file """
 
+        sid = self.__vars["vars"]["scan_id"]
         fdir, fname = os.path.split(self.filename)
-        _, bfname = os.path.split(self.__base_filename)
         sname, fext = os.path.splitext(fname)
         # beamtimeid = self.beamtimeid()
 
-        try:
-            scanname, _ = os.path.splitext(bfname % "")
-        except Exception:
-            scanname, _ = os.path.splitext(bfname)
+        scanname = self.__scanname(sid)
+        # _, bfname = os.path.split(self.__base_filename)
+        # try:
+        #     scanname, _ = os.path.splitext(bfname % "")
+        # except Exception:
+        #     scanname, _ = os.path.splitext(bfname)
 
         try:
             sm = dict(self.__getEnvVar('SciCatMeasurements', {}))
@@ -1295,7 +1349,6 @@ class NXS_FileRecorder(BaseFileRecorder):
         if isinstance(variables, dict) and "entryname" in variables:
             entryname = variables["entryname"]
         if appendentry is True:
-            sid = self.__vars["vars"]["scan_id"]
             entryname = entryname + ("_%05i" % sid)
             sname = sname + ("_%05i" % sid)
 
