@@ -1,8 +1,5 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "SARDANANXSRECORDER" "1" "Nov 09, 2022" "3.12" "Sardana NeXus Recorder"
-.SH NAME
-sardananxsrecorder \- sardananxsrecorder Documentation
 .
 .nr rst2man-indent-level 0
 .
@@ -30,6 +27,9 @@ level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .in \\n[rst2man-indent\\n[rst2man-indent-level]]u
 ..
+.TH "SARDANANXSRECORDER" "1" "Jun 03, 2024" "3.22" "Sardana NeXus Recorder"
+.SH NAME
+sardananxsrecorder \- sardananxsrecorder Documentation
 .sp
 \fI\%\fP
 \fI\%\fP
@@ -79,7 +79,7 @@ defining the package location, e.g.
 .sp
 .SS Debian packages
 .sp
-Debian Bookworm, Bullseye, Buster and Ubuntu Lunar, Jammy, Focal packages can be found in the HDRI repository.
+Debian Bookworm, Bullseye, Buster and Ubuntu Lunar, Jammy and Focal packages can be found in the HDRI repository.
 .sp
 To install the debian packages, add the PGP repository key
 .INDENT 0.0
@@ -330,17 +330,25 @@ The NeXus file recorder uses the following sardana environment variables
 .IP \(bu 2
 \fBNXSAppendSciCatDataset\fP \fI(bool)\fP \- append scan name to scicat dataset list file, default: \fBFalse\fP
 .IP \(bu 2
-\fBBeamtimeFilePath\fP \fI(str)\fP \- beamtime file path to search beamtime metadata file, default: \fB"/gpfs/current"\fP
+\fBBeamtimeFilePath\fP \fI(str)\fP \- beamtime file path to search beamtime metadata file, default: \fB\(dq/gpfs/current\(dq\fP
 .IP \(bu 2
-\fBBeamtimeFilePrefix\fP \fI(str)\fP \- beamtime metadata file prefix, default: \fB"beamtime\-metadata\-"\fP
+\fBBeamtimeFilePrefix\fP \fI(str)\fP \- beamtime metadata file prefix, default: \fB\(dqbeamtime\-metadata\-\(dq\fP
 .IP \(bu 2
-\fBBeamtimeFileExt\fP \fI(str)\fP \- beamtime metadata file extension, default: \fB".json"\fP
+\fBBeamtimeFileExt\fP \fI(str)\fP \- beamtime metadata file extension, default: \fB\(dq.json\(dq\fP
 .IP \(bu 2
-\fBSciCatDatasetListFilePrefix\fP \fI(str)\fP \- scicat dataset list file prefix, default: \fB"scicat\-datasets\-"\fP
+\fBSciCatDatasetListFilePrefix\fP \fI(str)\fP \- scicat dataset list file prefix, default: \fB\(dqscicat\-datasets\-\(dq\fP
 .IP \(bu 2
-\fBSciCatDatasetListFileExt\fP \fI(str)\fP \- scicat dataset list file extension, default: \fB".lst"\fP
+\fBSciCatDatasetListFileExt\fP \fI(str)\fP \- scicat dataset list file extension, default: \fB\(dq.lst\(dq\fP
 .IP \(bu 2
 \fBSciCatDatasetListFileLocal\fP \fI(bool)\fP \- add the hostname to the scicat dataset list file extension, default: \fBFalse\fP
+.IP \(bu 2
+\fBSciCatAutoGrouping\fP \fI(bool)\fP \- group all scans with the measurement name set to the base scan filename, default: \fBFalse\fP
+.IP \(bu 2
+\fBMetadataScript\fP \fI(str)\fP \- a python module file name containing \fBmain()\fP  which provides a dictionary with user metadata stored in the INIT mode, default: \fB\(dq\(dq\fP
+.IP \(bu 2
+\fBScicatMeasurements\fP \fI(dict)\fP \- a dictionary of  measurement names indexed by \fBScanDir\fP and  used by \fBscingestor\fP, default: \fB{}\fP
+.IP \(bu 2
+\fBCreateMeasurementFile\fP \fI(bool)\fP \- create a measurement file with its filename releated to \fBScicatMeasurements\fP or \fBScanFile\fP, default: \fBFalse\fP
 .UNINDENT
 .sp
 Contents:
@@ -351,8 +359,8 @@ Contents:
 This is the macro server scan data NeXus recorder module
 .INDENT 0.0
 .TP
-.B class sardananxsrecorder.nxsrecorder.NXS_FileRecorder(filename=None, macro=None, **pars)
-Bases: \fBsardana.macroserver.scan.recorder.storage.BaseFileRecorder\fP
+.B class  sardananxsrecorder.nxsrecorder.NXS_FileRecorder(filename=None, macro=None, **pars)
+Bases: \fI\%BaseFileRecorder\fP
 .sp
 This recorder saves data to a NeXus file making use of NexDaTaS Writer
 .sp
@@ -430,7 +438,7 @@ and records in INIT mode
 .UNINDENT
 .INDENT 7.0
 .TP
-.B formats = {\(aqh5\(aq: \(aq.h5\(aq, \(aqndf\(aq: \(aq.ndf\(aq, \(aqnx\(aq: \(aq.nx\(aq, \(aqnxs\(aq: \(aq.nxs\(aq}
+.B formats  =  {\(aqh5\(aq: \(aq.h5\(aq, \(aqndf\(aq: \(aq.ndf\(aq, \(aqnx\(aq: \(aq.nx\(aq, \(aqnxs\(aq: \(aq.nxs\(aq}
 (\fI\%dict\fP <\fI\%str\fP, \fI\%str\fP > ) recoder format
 .UNINDENT
 .INDENT 7.0
@@ -448,8 +456,8 @@ the output file format
 .UNINDENT
 .INDENT 7.0
 .TP
-.B class numpyEncoder(*, skipkeys=False, ensure_ascii=True, check_circular=True, allow_nan=True, sort_keys=False, indent=None, separators=None, default=None)
-Bases: \fBjson.encoder.JSONEncoder\fP
+.B class  numpyEncoder(*, skipkeys=False, ensure_ascii=True, check_circular=True, allow_nan=True, sort_keys=False, indent=None, separators=None, default=None)
+Bases: \fBJSONEncoder\fP
 .sp
 numpy json encoder with list
 .sp
@@ -465,7 +473,7 @@ ensure_ascii is false, the output can contain non\-ASCII characters.
 .sp
 If check_circular is true, then lists, dicts, and custom encoded
 objects will be checked for circular references during encoding to
-prevent an infinite recursion (which would cause an OverflowError).
+prevent an infinite recursion (which would cause an RecursionError).
 Otherwise, no such check takes place.
 .sp
 If allow_nan is true, then NaN, Infinity, and \-Infinity will be
@@ -507,11 +515,11 @@ default encoder
 Sardana Scan Recorders
 .INDENT 0.0
 .IP \(bu 2
-genindex
+\fI\%Index\fP
 .IP \(bu 2
-modindex
+\fI\%Module Index\fP
 .IP \(bu 2
-search
+\fI\%Search Page\fP
 .UNINDENT
 .SH AUTHOR
 Author
