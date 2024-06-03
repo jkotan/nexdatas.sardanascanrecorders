@@ -166,7 +166,7 @@ class NXS_FileRecorder(BaseFileRecorder):
         appendentry = self.__getConfVar("AppendEntry", True)
         scanID = self.__env["ScanID"] \
             if "ScanID" in self.__env.keys() else -1
-        appendentry = not self.__setFileName(
+        self.__setFileName(
             self.__base_filename, not appendentry, scanID)
 
     def __command(self, server, command, *args):
@@ -341,10 +341,12 @@ class NXS_FileRecorder(BaseFileRecorder):
 
         :param filename: sardana scanfile name
         :type filename: :obj:`str`
-        :param numer: True if append scanID
-        :param numer: :obj:`bool`
+        :param number: True if append scanID
+        :param number: :obj:`bool`
         :param scanID: scanID to append
         :type scanID: :obj:`int`
+        :returns: True if append scanID
+        :rtype: :obj:`bool`
         """
         if scanID is not None and scanID < 0:
             return number
@@ -396,18 +398,17 @@ class NXS_FileRecorder(BaseFileRecorder):
             except Exception:
                 pass
 
-        if not subs:
-            if number:
-                if filename.endswith('.tmp') and \
-                   filename[-4].rpartition(".")[0] and \
-                   filename[-4].rpartition(".")[2] in self.formats.keys():
-                    tpl = filename[-4].rpartition(".")
-                    self.filename = "%s_%05d.%s.tmp" % (tpl[0], serial, tpl[2])
-                else:
-                    tpl = filename.rpartition('.')
-                    self.filename = "%s_%05d.%s" % (tpl[0], serial, tpl[2])
+        if not subs or number:
+            if filename.endswith('.tmp') and \
+               filename[-4].rpartition(".")[0] and \
+               filename[-4].rpartition(".")[2] in self.formats.keys():
+                tpl = filename[-4].rpartition(".")
+                self.filename = "%s_%05d.%s.tmp" % (tpl[0], serial, tpl[2])
             else:
-                self.filename = filename
+                tpl = filename.rpartition('.')
+                self.filename = "%s_%05d.%s" % (tpl[0], serial, tpl[2])
+        else:
+            self.filename = filename
 
         return number or subs
 
@@ -968,12 +969,11 @@ class NXS_FileRecorder(BaseFileRecorder):
             self.__setNexusDevices()
 
             appendentry = self.__getConfVar("AppendEntry", True)
-
-            appendentry = not self.__setFileName(
+            appendscanid = not self.__setFileName(
                 self.__base_filename, not appendentry)
             envRec = self.recordlist.getEnviron()
             self.__vars["vars"]["serialno"] = ("_%05i" % envRec["serialno"]) \
-                if appendentry else ""
+                if appendscanid else ""
             self.__vars["vars"]["scan_id"] = envRec["serialno"]
             self.__vars["vars"]["scan_title"] = envRec["title"]
             if self.__macro:
@@ -1198,15 +1198,15 @@ class NXS_FileRecorder(BaseFileRecorder):
         """
         result = ""
         fpath = self.filename
-        if fpath.startswith(bmtfpath):
-            try:
+        try:
+            if fpath.startswith(bmtfpath):
                 if os.path.isdir(bmtfpath):
                     btml = [fl for fl in os.listdir(bmtfpath)
                             if (fl.startswith(bmtfprefix)
                                 and fl.endswith(bmtfext))]
                     result = btml[0][len(bmtfprefix):-len(bmtfext)]
-            except Exception:
-                pass
+        except Exception:
+            pass
         return result
 
     def beamtimeid(self):
@@ -1221,9 +1221,9 @@ class NXS_FileRecorder(BaseFileRecorder):
         """ find scan name
         """
         try:
-            scan_file = self.macro.getEnv('ScanFile')
+            scan_file = self.__macro().getEnv('ScanFile')
         except Exception:
-            self._scan_file = ""
+            scan_file = ""
         if isinstance(scan_file, str):
             scan_file = [scan_file]
         self._scan_file = []
