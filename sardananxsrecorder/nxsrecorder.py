@@ -1260,6 +1260,13 @@ class NXS_FileRecorder(BaseFileRecorder):
         scanname = os.path.commonprefix(
             [sname.format(ScanID=11111111),
              sname.format(ScanID=99999999)])
+        if '%' in scanname:
+            try:
+                scanname = os.path.commonprefix(
+                    [scanname % 11111111,
+                     scanname % 99999999])
+            except Exception:
+                pass
         if scanname.endswith("_"):
             scanname = scanname[:-1]
         return scanname
