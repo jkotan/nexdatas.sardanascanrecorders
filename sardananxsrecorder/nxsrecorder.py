@@ -391,24 +391,27 @@ class NXS_FileRecorder(BaseFileRecorder):
                 subs = False
         if not self.__raw_filename:
             self.__raw_filename = self.__rawfilename(serial)
-        if not subs:
+        self.debug('Raw Filename: %s' % str(self.__raw_filename))
+        if not subs and self.__raw_filename and \
+           "{ScanID" in self.__raw_filename:
             try:
-                _ = self.__raw_filename.format(ScanID=serial)
+                self.filename = self.__raw_filename.format(ScanID=serial)
                 subs = True
             except Exception:
                 pass
 
-        if not subs or number:
-            if filename.endswith('.tmp') and \
-               filename[-4].rpartition(".")[0] and \
-               filename[-4].rpartition(".")[2] in self.formats.keys():
-                tpl = filename[-4].rpartition(".")
-                self.filename = "%s_%05d.%s.tmp" % (tpl[0], serial, tpl[2])
+        if not subs:
+            if number:
+                if filename.endswith('.tmp') and \
+                   filename[-4].rpartition(".")[0] and \
+                   filename[-4].rpartition(".")[2] in self.formats.keys():
+                    tpl = filename[-4].rpartition(".")
+                    self.filename = "%s_%05d.%s.tmp" % (tpl[0], serial, tpl[2])
+                else:
+                    tpl = filename.rpartition('.')
+                    self.filename = "%s_%05d.%s" % (tpl[0], serial, tpl[2])
             else:
-                tpl = filename.rpartition('.')
-                self.filename = "%s_%05d.%s" % (tpl[0], serial, tpl[2])
-        else:
-            self.filename = filename
+                self.filename = filename
 
         return number or subs
 
@@ -1223,12 +1226,17 @@ class NXS_FileRecorder(BaseFileRecorder):
         try:
             scan_file = self.__macro().getEnv('ScanFile')
         except Exception:
-            scan_file = ""
+            scan_file = []
+        try:
+            scan_dir = self.__macro().getEnv('ScanDir')
+        except Exception:
+            scan_dir = "/"
         if isinstance(scan_file, str):
             scan_file = [scan_file]
-        self._scan_file = []
         bfilename = ""
+
         for sfile in scan_file:
+            sfile = os.path.join(scan_dir, sfile)
             try:
                 ffile = sfile.format(ScanID=serial)
             except KeyError:
@@ -1288,7 +1296,9 @@ class NXS_FileRecorder(BaseFileRecorder):
         # except Exception:
         #     scanname, _ = os.path.splitext(bfname)
 
-        if appendentry is True:
+        if appendentry is True and \
+                '%' not in self.__raw_filename and \
+                "{ScanID" not in self.__raw_filename:
             sid = self.__vars["vars"]["scan_id"]
             sname = "%s::/%s_%05i;%s_%05i" % (
                 scanname, entryname, sid, scanname, sid)
@@ -1349,8 +1359,10 @@ class NXS_FileRecorder(BaseFileRecorder):
         if isinstance(variables, dict) and "entryname" in variables:
             entryname = variables["entryname"]
         if appendentry is True:
-            entryname = entryname + ("_%05i" % sid)
-            sname = sname + ("_%05i" % sid)
+            if '%' not in self.__raw_filename and \
+               "{ScanID" not in self.__raw_filename:
+                sname = sname + ("_%05i" % sid)
+                entryname = entryname + ("_%05i" % sid)
 
         mntname = scanname
         if fdir in sm.keys() and sm[fdir]:
