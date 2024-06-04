@@ -1023,7 +1023,7 @@ class NXS_FileRecorder(BaseFileRecorder):
             # self.debug('START_DATA: %s' % str(envRec))
 
             self.__nexuswriter_device.jsonrecord = rec
-            self.skipAcquisitionModes = self.__skipAcquisitionModes(self)
+            self.skipAcquisitionModes = self.__skipAcquisitionModes()
             if "INIT" in self.skipAcquisitionModes:
                 self.__nexuswriter_device.skipAcquisition = True
 
@@ -1333,6 +1333,8 @@ class NXS_FileRecorder(BaseFileRecorder):
             sid = self.__vars["vars"]["scan_id"]
             sname = "%s::/%s_%05i;%s_%05i" % (
                 scanname, entryname, sid, scanname, sid)
+        if "INIT" in self.skipAcquisitionModes:
+            sname = "%s:%s" % (sname, time.time())
 
         # auto grouping
         grouping = bool(self.__getEnvVar('SciCatAutoGrouping', False))
@@ -1394,7 +1396,6 @@ class NXS_FileRecorder(BaseFileRecorder):
                "{ScanID" not in self.__raw_filename:
                 sname = sname + ("_%05i" % sid)
                 entryname = entryname + ("_%05i" % sid)
-
         mntname = scanname
         if fdir in sm.keys() and sm[fdir]:
             mntname = sm[fdir]
