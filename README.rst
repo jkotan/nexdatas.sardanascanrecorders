@@ -209,6 +209,8 @@ The NeXus file recorder uses the following sardana environment variables
 
 * **ActiveMntGrp** *(str)* - active measurement group
 * **ScanID** *(int)* - the last scan identifier number, default: ``-1``
+* **ScanDir** *(str)* - the scan directory
+* **ScanFile** *(list)* - a list of scan files
 * **NeXusSelectorDevice** *(str)* - NXSRecSelector tango device if more installed, otherwise first one found
 
 * **NXSAppendSciCatDataset** *(bool)* - append scan name to scicat dataset list file, default: ``False``
@@ -222,4 +224,5 @@ The NeXus file recorder uses the following sardana environment variables
 * **MetadataScript** *(str)* - a python module file name containing ``main()``  which provides a dictionary with user metadata stored in the INIT mode, default: ``""``
 * **ScicatMeasurements** *(dict)* - a dictionary of  measurement names indexed by ``ScanDir`` and  used by ``scingestor``, default: ``{}``
 * **CreateMeasurementFile** *(bool)* - create a measurement file with its filename releated to ``ScicatMeasurements`` or ``ScanFile``, default: ``False``
+* **NeXusSkipAcquisitionModes** *(list)* - a list of strategy modes for which acquisition is skip
   
