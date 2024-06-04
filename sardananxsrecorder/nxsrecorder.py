@@ -155,6 +155,9 @@ class NXS_FileRecorder(BaseFileRecorder):
         #: (:obj:`dict` <:obj:`str` , :obj:`str`>) NeXus configuration
         self.__conf = {}
 
+        #: (:obj:`list` <:obj:`str`>) skip Acquisition Modes
+        self.skipAcquisitionModes = []
+
         #: (:obj:`dict` <:obj:`str` , `any`>) User data
         self.__udata = None
 
@@ -1020,6 +1023,10 @@ class NXS_FileRecorder(BaseFileRecorder):
             # self.debug('START_DATA: %s' % str(envRec))
 
             self.__nexuswriter_device.jsonrecord = rec
+            self.skipAcquisitionModes = self.__skipAcquisitionModes()
+            if "INIT" in self.skipAcquisitionModes:
+                self.__nexuswriter_device.skipAcquisition = True
+
             self.__command(self.__nexuswriter_device, "openEntry")
         except Exception:
             self.__removeDynamicComponent()
@@ -1106,6 +1113,8 @@ class NXS_FileRecorder(BaseFileRecorder):
             rec = json.dumps(
                 envrecord, cls=NXS_FileRecorder.numpyEncoder)
             self.__nexuswriter_device.jsonrecord = rec
+            if "STEP" in self.skipAcquisitionModes:
+                self.__nexuswriter_device.skipAcquisition = True
 
             # self.debug('DATA: {"data":%s}' % json.dumps(
             #     record.data,
@@ -1174,6 +1183,8 @@ class NXS_FileRecorder(BaseFileRecorder):
             rec = json.dumps(
                 envrecord, cls=NXS_FileRecorder.numpyEncoder)
             self.__nexuswriter_device.jsonrecord = rec
+            if "FINAL" in self.skipAcquisitionModes:
+                self.__nexuswriter_device.skipAcquisition = True
             self.__command(self.__nexuswriter_device, "closeEntry")
             self.__command(self.__nexuswriter_device, "closeFile")
         except Exception:
@@ -1219,6 +1230,19 @@ class NXS_FileRecorder(BaseFileRecorder):
         bmtfext = self.__getEnvVar("BeamtimeFileExt", ".json")
         beamtimeid = self.beamtime_id(bmtfpath, bmtfprefix, bmtfext)
         return beamtimeid or "00000000"
+
+    def __skipAcquisitionModes(self):
+        """ find skip acquisition modes
+        """
+        try:
+            skip_acq = self.__macro().getEnv('NeXusSkipAcquisitionModes')
+        except Exception:
+            skip_acq = []
+        if isinstance(skip_acq, str):
+            skip_acq = re.split(r"[-;,.\s]\s*", skip_acq)
+        if skip_acq:
+            self.debug('Skip Acquisition Modes: %s' % str(skip_acq))
+        return skip_acq
 
     def __rawfilename(self, serial):
         """ find scan name
@@ -1309,6 +1333,8 @@ class NXS_FileRecorder(BaseFileRecorder):
             sid = self.__vars["vars"]["scan_id"]
             sname = "%s::/%s_%05i;%s_%05i" % (
                 scanname, entryname, sid, scanname, sid)
+        if "INIT" in self.skipAcquisitionModes:
+            sname = "%s:%s" % (sname, time.time())
 
         # auto grouping
         grouping = bool(self.__getEnvVar('SciCatAutoGrouping', False))
@@ -1370,7 +1396,6 @@ class NXS_FileRecorder(BaseFileRecorder):
                "{ScanID" not in self.__raw_filename:
                 sname = sname + ("_%05i" % sid)
                 entryname = entryname + ("_%05i" % sid)
-
         mntname = scanname
         if fdir in sm.keys() and sm[fdir]:
             mntname = sm[fdir]

@@ -27,7 +27,7 @@ level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .in \\n[rst2man-indent\\n[rst2man-indent-level]]u
 ..
-.TH "SARDANANXSRECORDER" "1" "Jun 03, 2024" "3.22" "Sardana NeXus Recorder"
+.TH "SARDANANXSRECORDER" "1" "Jun 04, 2024" "3.23" "Sardana NeXus Recorder"
 .SH NAME
 sardananxsrecorder \- sardananxsrecorder Documentation
 .sp
@@ -326,6 +326,10 @@ The NeXus file recorder uses the following sardana environment variables
 .IP \(bu 2
 \fBScanID\fP \fI(int)\fP \- the last scan identifier number, default: \fB\-1\fP
 .IP \(bu 2
+\fBScanDir\fP \fI(str)\fP \- the scan directory
+.IP \(bu 2
+\fBScanFile\fP \fI(list)\fP \- a list of scan files
+.IP \(bu 2
 \fBNeXusSelectorDevice\fP \fI(str)\fP \- NXSRecSelector tango device if more installed, otherwise first one found
 .IP \(bu 2
 \fBNXSAppendSciCatDataset\fP \fI(bool)\fP \- append scan name to scicat dataset list file, default: \fBFalse\fP
@@ -349,6 +353,8 @@ The NeXus file recorder uses the following sardana environment variables
 \fBScicatMeasurements\fP \fI(dict)\fP \- a dictionary of  measurement names indexed by \fBScanDir\fP and  used by \fBscingestor\fP, default: \fB{}\fP
 .IP \(bu 2
 \fBCreateMeasurementFile\fP \fI(bool)\fP \- create a measurement file with its filename releated to \fBScicatMeasurements\fP or \fBScanFile\fP, default: \fBFalse\fP
+.IP \(bu 2
+\fBNeXusSkipAcquisitionModes\fP \fI(list)\fP \- a list of strategy modes for which acquisition is skip
 .UNINDENT
 .sp
 Contents:

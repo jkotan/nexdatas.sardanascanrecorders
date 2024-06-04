@@ -1,3 +1,7 @@
+2024-06-04 Jan Kotanski <jankotan@gmail.com>
+	* skip acquisition for the modes listed in NeXusSkipAcquisitionModes variable (#117)
+	* tagged as 3.23.0
+
 2024-06-03 Jan Kotanski <jankotan@gmail.com>
 	* improve support for ScanFile formating wih _%05d and _{ScanID:05d} (#114)
 	* tagged as 3.22.0
