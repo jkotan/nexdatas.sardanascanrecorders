@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>sardananxsrecorder.nxsrecorder &#8212; Sardana NeXus Recorder 3.18.0 documentation</title>
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <title>sardananxsrecorder.nxsrecorder &#8212; Sardana NeXus Recorder 3.24.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
-<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="../../_static/js/jquery-1.12.4.min.js"></script>
 <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
-<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
 
   </head><body>
@@ -35,7 +37,7 @@
         </button>
         <a class="navbar-brand" href="../../index.html">
           Sardana NeXus Recorder</a>
-        <span class="navbar-text navbar-version pull-left"><b>3.18</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>3.24</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -126,6 +128,7 @@
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">import</span> <span class="nn">json</span>
@@ -138,6 +141,15 @@
     <span class="kn">import</span> <span class="nn">tango</span>
 <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">PyTango</span> <span class="k">as</span> <span class="nn">tango</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">NXSWRITER</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">nxstools</span> <span class="kn">import</span> <span class="n">h5cppwriter</span> <span class="k">as</span> <span class="n">h5writer</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">nxstools</span> <span class="kn">import</span> <span class="n">h5pywriter</span> <span class="k">as</span> <span class="n">h5writer</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+    <span class="n">NXSWRITER</span> <span class="o">=</span> <span class="kc">False</span>
 
 
 <span class="kn">from</span> <span class="nn">sardana.macroserver.scan.recorder.storage</span> <span class="kn">import</span> <span class="n">BaseFileRecorder</span>
@@ -155,7 +167,7 @@
 
 
 <div class="viewcode-block" id="NXS_FileRecorder"><a class="viewcode-back" href="../../sardananxsrecorder.html#sardananxsrecorder.nxsrecorder.NXS_FileRecorder">[docs]</a><span class="k">class</span> <span class="nc">NXS_FileRecorder</span><span class="p">(</span><span class="n">BaseFileRecorder</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; This recorder saves data to a NeXus file making use of NexDaTaS Writer</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; This recorder saves data to a NeXus file making use of NexDaTaS Writer</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1">#: (:obj:`dict` &lt;:obj:`str`, :obj:`str` &gt; ) recoder format</span>
@@ -167,10 +179,10 @@
     <span class="p">}</span>
 
 <div class="viewcode-block" id="NXS_FileRecorder.numpyEncoder"><a class="viewcode-back" href="../../sardananxsrecorder.html#sardananxsrecorder.nxsrecorder.NXS_FileRecorder.numpyEncoder">[docs]</a>    <span class="k">class</span> <span class="nc">numpyEncoder</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONEncoder</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; numpy json encoder with list</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; numpy json encoder with list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="NXS_FileRecorder.numpyEncoder.default"><a class="viewcode-back" href="../../sardananxsrecorder.html#sardananxsrecorder.nxsrecorder.NXS_FileRecorder.numpyEncoder.default">[docs]</a>        <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot; default encoder</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot; default encoder</span>
 
 <span class="sd">            :param obj: numpy array object</span>
 <span class="sd">            :type obj: :obj:`object` or `any`</span>
@@ -186,7 +198,7 @@
             <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONEncoder</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span></div></div>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">macro</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">pars</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; constructor</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; constructor</span>
 
 <span class="sd">        :param filename: ScanFile name</span>
 <span class="sd">        :type filename: :obj:`str`</span>
@@ -196,6 +208,8 @@
         <span class="n">BaseFileRecorder</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="c1">#: (:obj:`str`) base filename</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__base_filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="c1">#: (:obj:`str`) raw filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__raw_filename</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">macro</span><span class="p">)</span> <span class="k">if</span> <span class="n">macro</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="c1">#: (:class:`tango.Database`) tango database</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__db</span> <span class="o">=</span> <span class="n">tango</span><span class="o">.</span><span class="n">Database</span><span class="p">()</span>
@@ -247,6 +261,9 @@
         <span class="c1">#: (:obj:`dict` &lt;:obj:`str` , :obj:`str`&gt;) NeXus configuration</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__conf</span> <span class="o">=</span> <span class="p">{}</span>
 
+        <span class="c1">#: (:obj:`list` &lt;:obj:`str`&gt;) skip Acquisition Modes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skipAcquisitionModes</span> <span class="o">=</span> <span class="p">[]</span>
+
         <span class="c1">#: (:obj:`dict` &lt;:obj:`str` , `any`&gt;) User data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__udata</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -258,11 +275,11 @@
         <span class="n">appendentry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getConfVar</span><span class="p">(</span><span class="s2">&quot;AppendEntry&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="n">scanID</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__env</span><span class="p">[</span><span class="s2">&quot;ScanID&quot;</span><span class="p">]</span> \
             <span class="k">if</span> <span class="s2">&quot;ScanID&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__env</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="n">appendentry</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__setFileName</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__setFileName</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__base_filename</span><span class="p">,</span> <span class="ow">not</span> <span class="n">appendentry</span><span class="p">,</span> <span class="n">scanID</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; execute tango server (or python object) command</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; execute tango server (or python object) command</span>
 
 <span class="sd">        :param server: server name (or python object)</span>
 <span class="sd">        :type server: :class:`tango.DeviceProxy`</span>
@@ -289,7 +306,7 @@
                     <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2"> cannot be found&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">command</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">__getConfVar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pass_default</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; provides configuration variable from fetched profile configuration</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; provides configuration variable from fetched profile configuration</span>
 
 <span class="sd">        :param var: variable name</span>
 <span class="sd">        :type var: :obj:&#39;str&#39;</span>
@@ -326,7 +343,7 @@
             <span class="k">return</span> <span class="n">default</span>
 
     <span class="k">def</span> <span class="nf">__getServerVar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pass_default</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; provides configuration variable from selector server</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; provides configuration variable from selector server</span>
 <span class="sd">            or python object</span>
 
 <span class="sd">        :param var: variable name</span>
@@ -364,7 +381,7 @@
             <span class="k">return</span> <span class="n">default</span>
 
     <span class="k">def</span> <span class="nf">__getEnvVar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">pass_default</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; provides spock environment variable</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; provides spock environment variable</span>
 
 <span class="sd">        :param var: variable name</span>
 <span class="sd">        :type var: :obj:&#39;str&#39;</span>
@@ -388,7 +405,7 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">__wait</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">proxy</span><span class="p">,</span> <span class="n">counter</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; waits until device is running</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; waits until device is running</span>
 
 <span class="sd">        :param proxy: device proxy</span>
 <span class="sd">        :type proxy: :class:`tango.DeviceProxy`</span>
@@ -411,7 +428,7 @@
             <span class="n">cnt</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">__asynchcommand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; execute tango server (or python object) command asynchronously</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; execute tango server (or python object) command asynchronously</span>
 
 <span class="sd">        :param server: server proxy (or python object)</span>
 <span class="sd">        :type server: :class:`tango.DeviceProxy`</span>
@@ -429,14 +446,16 @@
                 <span class="k">raise</span>
 
     <span class="k">def</span> <span class="nf">__setFileName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scanID</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; sets the file names w/o scanID</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; sets the file names w/o scanID</span>
 
 <span class="sd">        :param filename: sardana scanfile name</span>
 <span class="sd">        :type filename: :obj:`str`</span>
-<span class="sd">        :param numer: True if append scanID</span>
-<span class="sd">        :param numer: :obj:`bool`</span>
+<span class="sd">        :param number: True if append scanID</span>
+<span class="sd">        :param number: :obj:`bool`</span>
 <span class="sd">        :param scanID: scanID to append</span>
 <span class="sd">        :type scanID: :obj:`int`</span>
+<span class="sd">        :returns: True if append scanID</span>
+<span class="sd">        :rtype: :obj:`bool`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">scanID</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">scanID</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">number</span>
@@ -465,20 +484,30 @@
 
         <span class="n">subs</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">([</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">))])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
         <span class="c1"># construct the filename, e.g. : /dir/subdir/etcdir/prefix_00123.nxs</span>
-        <span class="k">if</span> <span class="n">subs</span> <span class="ow">or</span> <span class="n">number</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">scanID</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">serial</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recordlist</span><span class="o">.</span><span class="n">getEnvironValue</span><span class="p">(</span><span class="s1">&#39;serialno&#39;</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">scanID</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">isarver</span> <span class="o">&gt;=</span> <span class="mi">304</span> <span class="ow">or</span> <span class="n">isarver</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">serial</span> <span class="o">=</span> <span class="n">scanID</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">serial</span> <span class="o">=</span> <span class="n">scanID</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">scanID</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">serial</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recordlist</span><span class="o">.</span><span class="n">getEnvironValue</span><span class="p">(</span><span class="s1">&#39;serialno&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">scanID</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">isarver</span> <span class="o">&gt;=</span> <span class="mi">304</span> <span class="ow">or</span> <span class="n">isarver</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">serial</span> <span class="o">=</span> <span class="n">scanID</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">serial</span> <span class="o">=</span> <span class="n">scanID</span> <span class="o">+</span> <span class="mi">1</span>
+
         <span class="k">if</span> <span class="n">subs</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="c1">#: output file name</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">%</span> <span class="n">serial</span>
             <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                 <span class="n">subs</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__raw_filename</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__raw_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__rawfilename</span><span class="p">(</span><span class="n">serial</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Raw Filename: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__raw_filename</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">subs</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__raw_filename</span> <span class="ow">and</span> \
+           <span class="s2">&quot;{ScanID&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__raw_filename</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__raw_filename</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ScanID</span><span class="o">=</span><span class="n">serial</span><span class="p">)</span>
+                <span class="n">subs</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">subs</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">number</span><span class="p">:</span>
@@ -496,7 +525,7 @@
         <span class="k">return</span> <span class="n">number</span> <span class="ow">or</span> <span class="n">subs</span>
 
 <div class="viewcode-block" id="NXS_FileRecorder.getFormat"><a class="viewcode-back" href="../../sardananxsrecorder.html#sardananxsrecorder.nxsrecorder.NXS_FileRecorder.getFormat">[docs]</a>    <span class="k">def</span> <span class="nf">getFormat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; provides the output file format</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; provides the output file format</span>
 
 <span class="sd">        :returns: the output file format</span>
 <span class="sd">        :rtype: :obj:`str`</span>
@@ -504,7 +533,7 @@
         <span class="k">return</span> <span class="s1">&#39;nxs&#39;</span></div>
 
     <span class="k">def</span> <span class="nf">__setNexusDevices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">onlyconfig</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; sets nexus Tango devices</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; sets nexus Tango devices</span>
 
 <span class="sd">        :param onlyconfig: If True do not set NXSDataWriter and</span>
 <span class="sd">                           profile configuration of NXSRecSelector</span>
@@ -612,7 +641,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span> <span class="o">=</span> <span class="kc">None</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Cannot connect to &#39;</span><span class="si">%s</span><span class="s2">&#39; &quot;</span> <span class="o">%</span> <span class="n">servers</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">()</span><span class="o">.</span><span class="n">Wwarning</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">()</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                             <span class="s2">&quot;Cannot connect to &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">servers</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span> <span class="o">=</span> <span class="kc">None</span>
@@ -620,9 +649,21 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="kn">from</span> <span class="nn">nxswriter</span> <span class="kn">import</span> <span class="n">TangoDataWriter</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span> <span class="o">=</span> <span class="n">TangoDataWriter</span><span class="o">.</span><span class="n">TangoDataWriter</span><span class="p">()</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">properties</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">__getEnvVar</span><span class="p">(</span><span class="s2">&quot;NeXusWriterProperties&quot;</span><span class="p">,</span> <span class="p">{}))</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s2">&quot;Cannot load NeXusWriterProperties </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">()</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s2">&quot;Cannot load NeXusWriterProperties </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)))</span>
+                    <span class="n">properties</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">ky</span><span class="p">,</span> <span class="n">vl</span> <span class="ow">in</span> <span class="n">properties</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span><span class="p">,</span> <span class="n">ky</span><span class="p">):</span>
+                        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span><span class="p">,</span> <span class="n">ky</span><span class="p">,</span> <span class="n">vl</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__get_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; provides a device alias</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; provides a device alias</span>
 
 <span class="sd">        :param name: device name</span>
 <span class="sd">        :type name: :obj:`str`</span>
@@ -646,7 +687,7 @@
         <span class="k">return</span> <span class="n">alias</span>
 
     <span class="k">def</span> <span class="nf">__collectAliases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">envRec</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; sets deviceAlaises and dynamicDataSources from env record</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; sets deviceAlaises and dynamicDataSources from env record</span>
 
 <span class="sd">        :param envRec: environment record</span>
 <span class="sd">        :type envRec: :obj:`dict` &lt;:obj:`str` , `any`&gt;</span>
@@ -683,7 +724,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">__dynamicDataSources</span><span class="p">[(</span><span class="nb">str</span><span class="p">(</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">))]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">__createDynamicComponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dss</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">udata</span><span class="p">,</span> <span class="n">nexuscomponents</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; creates a dynamic component</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; creates a dynamic component</span>
 
 <span class="sd">        :param dss: datasource list</span>
 <span class="sd">        :type dss: :obj:`list` &lt;:obj:`str`&gt;</span>
@@ -760,14 +801,14 @@
                            <span class="p">[</span><span class="n">jdss</span><span class="p">,</span> <span class="n">jddict</span><span class="p">,</span> <span class="n">jkeys</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">__removeDynamicComponent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; removes the dynamic component</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; removes the dynamic component</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__command</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__nexussettings_device</span><span class="p">,</span>
                        <span class="s2">&quot;removeDynamicComponent&quot;</span><span class="p">,</span>
                        <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dynamicCP</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">__availableComponents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; provides a list of available components</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; provides a list of available components</span>
 
 <span class="sd">        :returns: a list of available components</span>
 <span class="sd">        :rtype: :obj:`list` &lt;:obj:`str`&gt;</span>
@@ -780,7 +821,7 @@
             <span class="k">return</span> <span class="n">cmps</span>
 
     <span class="k">def</span> <span class="nf">__searchDataSources</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nexuscomponents</span><span class="p">,</span> <span class="n">cfm</span><span class="p">,</span> <span class="n">dyncp</span><span class="p">,</span> <span class="n">userkeys</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; checks if datasources and missing record keys are define in</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; checks if datasources and missing record keys are define in</span>
 <span class="sd">            the components or in the configuration server</span>
 
 <span class="sd">        :param nexuscomponents: nexus components</span>
@@ -905,7 +946,7 @@
         <span class="k">return</span> <span class="p">(</span><span class="n">nds</span><span class="p">,</span> <span class="n">dsNotFound</span><span class="p">,</span> <span class="n">cpReq</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">missingKeys</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">__createConfiguration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">userdata</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; create NeXus configuration</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; create NeXus configuration</span>
 
 <span class="sd">        :param userdata: user data dictionary</span>
 <span class="sd">        :type userdata: :obj:`dict` &lt;:obj:`str` , `any`&gt;</span>
@@ -1037,7 +1078,7 @@
         <span class="k">return</span> <span class="n">cnfxml</span>
 
 <div class="viewcode-block" id="NXS_FileRecorder._startRecordList"><a class="viewcode-back" href="../../sardananxsrecorder.html#sardananxsrecorder.nxsrecorder.NXS_FileRecorder._startRecordList">[docs]</a>    <span class="k">def</span> <span class="nf">_startRecordList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recordlist</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; starts record process: creates configuration</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; starts record process: creates configuration</span>
 <span class="sd">            and records in INIT mode</span>
 
 <span class="sd">        :param recordlist: sardana record list</span>
@@ -1052,14 +1093,21 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">__setNexusDevices</span><span class="p">()</span>
 
             <span class="n">appendentry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getConfVar</span><span class="p">(</span><span class="s2">&quot;AppendEntry&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-
-            <span class="n">appendentry</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__setFileName</span><span class="p">(</span>
+            <span class="n">appendscanid</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__setFileName</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__base_filename</span><span class="p">,</span> <span class="ow">not</span> <span class="n">appendentry</span><span class="p">)</span>
             <span class="n">envRec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recordlist</span><span class="o">.</span><span class="n">getEnviron</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__vars</span><span class="p">[</span><span class="s2">&quot;vars&quot;</span><span class="p">][</span><span class="s2">&quot;serialno&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">envRec</span><span class="p">[</span><span class="s2">&quot;serialno&quot;</span><span class="p">]</span> \
-                <span class="k">if</span> <span class="n">appendentry</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__vars</span><span class="p">[</span><span class="s2">&quot;vars&quot;</span><span class="p">][</span><span class="s2">&quot;serialno&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;_</span><span class="si">%05i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">envRec</span><span class="p">[</span><span class="s2">&quot;serialno&quot;</span><span class="p">])</span> \
+                <span class="k">if</span> <span class="n">appendscanid</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__vars</span><span class="p">[</span><span class="s2">&quot;vars&quot;</span><span class="p">][</span><span class="s2">&quot;scan_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">envRec</span><span class="p">[</span><span class="s2">&quot;serialno&quot;</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__vars</span><span class="p">[</span><span class="s2">&quot;vars&quot;</span><span class="p">][</span><span class="s2">&quot;scan_title&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">envRec</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">(),</span> <span class="s2">&quot;integ_time&quot;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__vars</span><span class="p">[</span><span class="s2">&quot;vars&quot;</span><span class="p">][</span><span class="s2">&quot;count_time&quot;</span><span class="p">]</span> <span class="o">=</span> \
+                        <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">()</span><span class="o">.</span><span class="n">integ_time</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">(),</span> <span class="s2">&quot;nb_points&quot;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__vars</span><span class="p">[</span><span class="s2">&quot;vars&quot;</span><span class="p">][</span><span class="s2">&quot;npoints&quot;</span><span class="p">]</span> <span class="o">=</span> \
+                        <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">()</span><span class="o">.</span><span class="n">nb_points</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__vars</span><span class="p">[</span><span class="s2">&quot;vars&quot;</span><span class="p">][</span><span class="s2">&quot;beamtime_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beamtimeid</span><span class="p">()</span>
             <span class="n">tzone</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getConfVar</span><span class="p">(</span><span class="s2">&quot;TimeZone&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__timezone</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__vars</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;start_time&quot;</span><span class="p">]</span> <span class="o">=</span> \
                 <span class="bp">self</span><span class="o">.</span><span class="n">__timeToString</span><span class="p">(</span><span class="n">envRec</span><span class="p">[</span><span class="s1">&#39;starttime&#39;</span><span class="p">],</span> <span class="n">tzone</span><span class="p">)</span>
@@ -1074,6 +1122,15 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">__vars</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;serialno&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">envRec</span><span class="p">[</span><span class="s2">&quot;serialno&quot;</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__vars</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;scan_title&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">envRec</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">(),</span> <span class="s2">&quot;integ_time&quot;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__vars</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;count_time&quot;</span><span class="p">]</span> <span class="o">=</span> \
+                        <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">()</span><span class="o">.</span><span class="n">integ_time</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">(),</span> <span class="s2">&quot;nb_points&quot;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__vars</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;npoints&quot;</span><span class="p">]</span> <span class="o">=</span> \
+                        <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">()</span><span class="o">.</span><span class="n">nb_points</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__vars</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;beamtime_id&quot;</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">__vars</span><span class="p">[</span><span class="s2">&quot;vars&quot;</span><span class="p">][</span><span class="s2">&quot;beamtime_id&quot;</span><span class="p">]</span>
 
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span><span class="p">,</span> <span class="s1">&#39;Init&#39;</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__command</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span><span class="p">,</span> <span class="s2">&quot;Init&quot;</span><span class="p">)</span>
@@ -1084,13 +1141,17 @@
             <span class="c1"># self.debug(&#39;START_DATA: %s&#39; % str(envRec))</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span><span class="o">.</span><span class="n">jsonrecord</span> <span class="o">=</span> <span class="n">rec</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">skipAcquisitionModes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__skipAcquisitionModes</span><span class="p">()</span>
+            <span class="k">if</span> <span class="s2">&quot;INIT&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">skipAcquisitionModes</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span><span class="o">.</span><span class="n">skipAcquisition</span> <span class="o">=</span> <span class="kc">True</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">__command</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span><span class="p">,</span> <span class="s2">&quot;openEntry&quot;</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__removeDynamicComponent</span><span class="p">()</span>
             <span class="k">raise</span></div>
 
     <span class="k">def</span> <span class="nf">__appendRecord</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; merges userdata with variable dictionary</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; merges userdata with variable dictionary</span>
 
 <span class="sd">        :param var: variable dictionary</span>
 <span class="sd">        :type var: { `data`: :obj:`dict` &lt;:obj:`str`, `any`&gt; ,</span>
@@ -1124,8 +1185,10 @@
                         <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">()</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                             <span class="s2">&quot;NXS_FileRecorder: </span><span class="si">%s</span><span class="s2"> does not exist&quot;</span> <span class="o">%</span> <span class="n">msf</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="kn">import</span> <span class="nn">imp</span>
-                    <span class="n">msm</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">load_source</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">msf</span><span class="p">)</span>
+                    <span class="kn">import</span> <span class="nn">importlib.util</span>
+                    <span class="n">spec</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">spec_from_file_location</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">msf</span><span class="p">)</span>
+                    <span class="n">msm</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">module_from_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+                    <span class="n">spec</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">exec_module</span><span class="p">(</span><span class="n">msm</span><span class="p">)</span>
                     <span class="n">ms</span> <span class="o">=</span> <span class="n">msm</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ms</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
@@ -1154,7 +1217,7 @@
         <span class="k">return</span> <span class="n">record</span>
 
 <div class="viewcode-block" id="NXS_FileRecorder._writeRecord"><a class="viewcode-back" href="../../sardananxsrecorder.html#sardananxsrecorder.nxsrecorder.NXS_FileRecorder._writeRecord">[docs]</a>    <span class="k">def</span> <span class="nf">_writeRecord</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; performs record process step: creates configuration</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; performs record process step: creates configuration</span>
 <span class="sd">            and records in INIT mode</span>
 
 <span class="sd">        :param record: sardana record list</span>
@@ -1168,6 +1231,8 @@
             <span class="n">rec</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
                 <span class="n">envrecord</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">NXS_FileRecorder</span><span class="o">.</span><span class="n">numpyEncoder</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span><span class="o">.</span><span class="n">jsonrecord</span> <span class="o">=</span> <span class="n">rec</span>
+            <span class="k">if</span> <span class="s2">&quot;STEP&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">skipAcquisitionModes</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span><span class="o">.</span><span class="n">skipAcquisition</span> <span class="o">=</span> <span class="kc">True</span>
 
             <span class="c1"># self.debug(&#39;DATA: {&quot;data&quot;:%s}&#39; % json.dumps(</span>
             <span class="c1">#     record.data,</span>
@@ -1183,7 +1248,7 @@
             <span class="k">raise</span></div>
 
     <span class="k">def</span> <span class="nf">__timeToString</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mtime</span><span class="p">,</span> <span class="n">tzone</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; convers time objects to string</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; convers time objects to string</span>
 
 <span class="sd">        :param mtime: sardana current time</span>
 <span class="sd">        :type mtime: :obj:`str`</span>
@@ -1205,11 +1270,14 @@
             <span class="n">tz</span> <span class="o">=</span> <span class="n">pytz</span><span class="o">.</span><span class="n">timezone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__timezone</span><span class="p">)</span>
 
         <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%S.</span><span class="si">%f</span><span class="s1">%z&#39;</span>
-        <span class="n">starttime</span> <span class="o">=</span> <span class="n">tz</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">mtime</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">):</span>
+            <span class="n">starttime</span> <span class="o">=</span> <span class="n">mtime</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">tz</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">starttime</span> <span class="o">=</span> <span class="n">tz</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">mtime</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">starttime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">fmt</span><span class="p">))</span>
 
 <div class="viewcode-block" id="NXS_FileRecorder._endRecordList"><a class="viewcode-back" href="../../sardananxsrecorder.html#sardananxsrecorder.nxsrecorder.NXS_FileRecorder._endRecordList">[docs]</a>    <span class="k">def</span> <span class="nf">_endRecordList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recordlist</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; ends record process: records in FINAL mode</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; ends record process: records in FINAL mode</span>
 <span class="sd">            and closes the nexus file</span>
 
 <span class="sd">        :param recordlist: sardana record list</span>
@@ -1233,6 +1301,8 @@
             <span class="n">rec</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
                 <span class="n">envrecord</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">NXS_FileRecorder</span><span class="o">.</span><span class="n">numpyEncoder</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span><span class="o">.</span><span class="n">jsonrecord</span> <span class="o">=</span> <span class="n">rec</span>
+            <span class="k">if</span> <span class="s2">&quot;FINAL&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">skipAcquisitionModes</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span><span class="o">.</span><span class="n">skipAcquisition</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__command</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span><span class="p">,</span> <span class="s2">&quot;closeEntry&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__command</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span><span class="p">,</span> <span class="s2">&quot;closeFile&quot;</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
@@ -1241,10 +1311,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">__removeDynamicComponent</span><span class="p">()</span>
             <span class="n">vl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getEnvVar</span><span class="p">(</span><span class="s2">&quot;NXSAppendSciCatDataset&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">vl</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__appendSciCatDataset</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span></div>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__appendSciCatDataset</span><span class="p">(</span><span class="n">vl</span><span class="p">)</span>
+            <span class="n">cmf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getEnvVar</span><span class="p">(</span><span class="s2">&quot;CreateMeasurementFile&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cmf</span> <span class="ow">and</span> <span class="n">NXSWRITER</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__createMeasurementFile</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">beamtime_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bmtfpath</span><span class="p">,</span> <span class="n">bmtfprefix</span><span class="p">,</span> <span class="n">bmtfext</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; code for beamtimeid  datasource</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; code for beamtimeid  datasource</span>
 
 <span class="sd">        :param bmtfpath:  beamtime file directory</span>
 <span class="sd">        :type bmtfpath: :obj:`str`</span>
@@ -1257,30 +1330,96 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="n">fpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
-        <span class="k">if</span> <span class="n">fpath</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">bmtfpath</span><span class="p">):</span>
-            <span class="k">try</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">fpath</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">bmtfpath</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">bmtfpath</span><span class="p">):</span>
                     <span class="n">btml</span> <span class="o">=</span> <span class="p">[</span><span class="n">fl</span> <span class="k">for</span> <span class="n">fl</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">bmtfpath</span><span class="p">)</span>
                             <span class="k">if</span> <span class="p">(</span><span class="n">fl</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">bmtfprefix</span><span class="p">)</span>
                                 <span class="ow">and</span> <span class="n">fl</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">bmtfext</span><span class="p">))]</span>
                     <span class="n">result</span> <span class="o">=</span> <span class="n">btml</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="nb">len</span><span class="p">(</span><span class="n">bmtfprefix</span><span class="p">):</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">bmtfext</span><span class="p">)]</span>
-            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                <span class="k">pass</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span>
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="nf">__appendSciCatDataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hostname</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; append dataset to SciCat ingestion list &quot;&quot;&quot;</span>
-
-        <span class="n">fdir</span><span class="p">,</span> <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">bfname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__base_filename</span><span class="p">)</span>
-        <span class="n">sname</span><span class="p">,</span> <span class="n">fext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
-
+    <span class="k">def</span> <span class="nf">beamtimeid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">bmtfpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getEnvVar</span><span class="p">(</span><span class="s2">&quot;BeamtimeFilePath&quot;</span><span class="p">,</span> <span class="s2">&quot;/gpfs/current&quot;</span><span class="p">)</span>
         <span class="n">bmtfprefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getEnvVar</span><span class="p">(</span>
             <span class="s2">&quot;BeamtimeFilePrefix&quot;</span><span class="p">,</span> <span class="s2">&quot;beamtime-metadata-&quot;</span><span class="p">)</span>
         <span class="n">bmtfext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getEnvVar</span><span class="p">(</span><span class="s2">&quot;BeamtimeFileExt&quot;</span><span class="p">,</span> <span class="s2">&quot;.json&quot;</span><span class="p">)</span>
         <span class="n">beamtimeid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beamtime_id</span><span class="p">(</span><span class="n">bmtfpath</span><span class="p">,</span> <span class="n">bmtfprefix</span><span class="p">,</span> <span class="n">bmtfext</span><span class="p">)</span>
-        <span class="n">beamtimeid</span> <span class="o">=</span> <span class="n">beamtimeid</span> <span class="ow">or</span> <span class="s2">&quot;00000000&quot;</span>
+        <span class="k">return</span> <span class="n">beamtimeid</span> <span class="ow">or</span> <span class="s2">&quot;00000000&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__skipAcquisitionModes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; find skip acquisition modes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">skip_acq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">()</span><span class="o">.</span><span class="n">getEnv</span><span class="p">(</span><span class="s1">&#39;NeXusSkipAcquisitionModes&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">skip_acq</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">skip_acq</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">skip_acq</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[-;,.\s]\s*&quot;</span><span class="p">,</span> <span class="n">skip_acq</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">skip_acq</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Skip Acquisition Modes: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">skip_acq</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">skip_acq</span>
+
+    <span class="k">def</span> <span class="nf">__rawfilename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">serial</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; find scan name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">scan_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">()</span><span class="o">.</span><span class="n">getEnv</span><span class="p">(</span><span class="s1">&#39;ScanFile&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">scan_file</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">scan_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">()</span><span class="o">.</span><span class="n">getEnv</span><span class="p">(</span><span class="s1">&#39;ScanDir&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">scan_dir</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scan_file</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">scan_file</span> <span class="o">=</span> <span class="p">[</span><span class="n">scan_file</span><span class="p">]</span>
+        <span class="n">bfilename</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">sfile</span> <span class="ow">in</span> <span class="n">scan_file</span><span class="p">:</span>
+            <span class="n">sfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">scan_dir</span><span class="p">,</span> <span class="n">sfile</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">ffile</span> <span class="o">=</span> <span class="n">sfile</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ScanID</span><span class="o">=</span><span class="n">serial</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">ffile</span> <span class="o">=</span> <span class="n">sfile</span>
+            <span class="k">if</span> <span class="n">ffile</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">__base_filename</span><span class="p">:</span>
+                <span class="n">bfilename</span> <span class="o">=</span> <span class="n">sfile</span>
+                <span class="k">break</span>
+        <span class="n">bfilename</span> <span class="o">=</span> <span class="n">bfilename</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">__base_filename</span>
+        <span class="k">return</span> <span class="n">bfilename</span>
+
+    <span class="k">def</span> <span class="nf">__scanname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">serial</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; find scan name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__raw_filename</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__raw_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__rawfilename</span><span class="p">(</span><span class="n">serial</span><span class="p">)</span>
+        <span class="n">bfilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__raw_filename</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">bfname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">bfilename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">bfname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tmp&quot;</span><span class="p">):</span>
+            <span class="n">bfname</span> <span class="o">=</span> <span class="n">bfname</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">sname</span><span class="p">,</span> <span class="n">fext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">bfname</span><span class="p">)</span>
+        <span class="n">scanname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">commonprefix</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">sname</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ScanID</span><span class="o">=</span><span class="mi">11111111</span><span class="p">),</span>
+             <span class="n">sname</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ScanID</span><span class="o">=</span><span class="mi">99999999</span><span class="p">)])</span>
+        <span class="k">if</span> <span class="s1">&#39;%&#39;</span> <span class="ow">in</span> <span class="n">scanname</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">scanname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">commonprefix</span><span class="p">(</span>
+                    <span class="p">[</span><span class="n">scanname</span> <span class="o">%</span> <span class="mi">11111111</span><span class="p">,</span>
+                     <span class="n">scanname</span> <span class="o">%</span> <span class="mi">99999999</span><span class="p">])</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">if</span> <span class="n">scanname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
+            <span class="n">scanname</span> <span class="o">=</span> <span class="n">scanname</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">scanname</span>
+
+    <span class="k">def</span> <span class="nf">__appendSciCatDataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hostname</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; append dataset to SciCat ingestion list &quot;&quot;&quot;</span>
+
+        <span class="n">sid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__vars</span><span class="p">[</span><span class="s2">&quot;vars&quot;</span><span class="p">][</span><span class="s2">&quot;scan_id&quot;</span><span class="p">]</span>
+        <span class="n">fdir</span><span class="p">,</span> <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">sname</span><span class="p">,</span> <span class="n">fext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+        <span class="n">beamtimeid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beamtimeid</span><span class="p">()</span>
         <span class="n">defprefix</span> <span class="o">=</span> <span class="s2">&quot;scicat-datasets-&quot;</span>
         <span class="n">defaulthost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getEnvVar</span><span class="p">(</span><span class="s2">&quot;SciCatDatasetListFileLocal&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">defaulthost</span><span class="p">:</span>
@@ -1298,18 +1437,26 @@
         <span class="n">variables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getConfVar</span><span class="p">(</span><span class="s2">&quot;ConfigVariables&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;entryname&quot;</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
             <span class="n">entryname</span> <span class="o">=</span> <span class="n">variables</span><span class="p">[</span><span class="s2">&quot;entryname&quot;</span><span class="p">]</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">scanname</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">bfname</span> <span class="o">%</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-            <span class="n">scanname</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">bfname</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">appendentry</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">sid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getEnvVar</span><span class="p">(</span><span class="s2">&quot;ScanID&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-            <span class="n">sname</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">::/</span><span class="si">%s%05i</span><span class="s2">;</span><span class="si">%s</span><span class="s2">_</span><span class="si">%05i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="n">scanname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__scanname</span><span class="p">(</span><span class="n">sid</span><span class="p">)</span>
+        <span class="c1"># _, bfname = os.path.split(self.__base_filename)</span>
+        <span class="c1"># try:</span>
+        <span class="c1">#     scanname, _ = os.path.splitext(bfname % &quot;&quot;)</span>
+        <span class="c1"># except Exception:</span>
+        <span class="c1">#     scanname, _ = os.path.splitext(bfname)</span>
+
+        <span class="k">if</span> <span class="n">appendentry</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">and</span> \
+                <span class="s1">&#39;%&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__raw_filename</span> <span class="ow">and</span> \
+                <span class="s2">&quot;{ScanID&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__raw_filename</span><span class="p">:</span>
+            <span class="n">sid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__vars</span><span class="p">[</span><span class="s2">&quot;vars&quot;</span><span class="p">][</span><span class="s2">&quot;scan_id&quot;</span><span class="p">]</span>
+            <span class="n">sname</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">::/</span><span class="si">%s</span><span class="s2">_</span><span class="si">%05i</span><span class="s2">;</span><span class="si">%s</span><span class="s2">_</span><span class="si">%05i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
                 <span class="n">scanname</span><span class="p">,</span> <span class="n">entryname</span><span class="p">,</span> <span class="n">sid</span><span class="p">,</span> <span class="n">scanname</span><span class="p">,</span> <span class="n">sid</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;INIT&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">skipAcquisitionModes</span><span class="p">:</span>
+            <span class="n">sname</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sname</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
 
         <span class="c1"># auto grouping</span>
         <span class="n">grouping</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__getEnvVar</span><span class="p">(</span><span class="s1">&#39;SciCatAutoGrouping&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+
         <span class="k">if</span> <span class="n">grouping</span><span class="p">:</span>
             <span class="n">commands</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">try</span><span class="p">:</span>
@@ -1337,9 +1484,57 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dslfile</span><span class="p">,</span> <span class="s2">&quot;a+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fl</span><span class="p">:</span>
             <span class="n">fl</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">sname</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">__createMeasurementFile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; create measurement file &quot;&quot;&quot;</span>
+
+        <span class="n">sid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__vars</span><span class="p">[</span><span class="s2">&quot;vars&quot;</span><span class="p">][</span><span class="s2">&quot;scan_id&quot;</span><span class="p">]</span>
+        <span class="n">fdir</span><span class="p">,</span> <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">sname</span><span class="p">,</span> <span class="n">fext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+        <span class="c1"># beamtimeid = self.beamtimeid()</span>
+
+        <span class="n">scanname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__scanname</span><span class="p">(</span><span class="n">sid</span><span class="p">)</span>
+        <span class="c1"># _, bfname = os.path.split(self.__base_filename)</span>
+        <span class="c1"># try:</span>
+        <span class="c1">#     scanname, _ = os.path.splitext(bfname % &quot;&quot;)</span>
+        <span class="c1"># except Exception:</span>
+        <span class="c1">#     scanname, _ = os.path.splitext(bfname)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">sm</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__getEnvVar</span><span class="p">(</span><span class="s1">&#39;SciCatMeasurements&#39;</span><span class="p">,</span> <span class="p">{}))</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">sm</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">entryname</span> <span class="o">=</span> <span class="s2">&quot;scan&quot;</span>
+        <span class="n">appendentry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getConfVar</span><span class="p">(</span><span class="s2">&quot;AppendEntry&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getConfVar</span><span class="p">(</span><span class="s2">&quot;ConfigVariables&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;entryname&quot;</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+            <span class="n">entryname</span> <span class="o">=</span> <span class="n">variables</span><span class="p">[</span><span class="s2">&quot;entryname&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">appendentry</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;%&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__raw_filename</span> <span class="ow">and</span> \
+               <span class="s2">&quot;{ScanID&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__raw_filename</span><span class="p">:</span>
+                <span class="n">sname</span> <span class="o">=</span> <span class="n">sname</span> <span class="o">+</span> <span class="p">(</span><span class="s2">&quot;_</span><span class="si">%05i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">sid</span><span class="p">)</span>
+                <span class="n">entryname</span> <span class="o">=</span> <span class="n">entryname</span> <span class="o">+</span> <span class="p">(</span><span class="s2">&quot;_</span><span class="si">%05i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">sid</span><span class="p">)</span>
+        <span class="n">mntname</span> <span class="o">=</span> <span class="n">scanname</span>
+        <span class="k">if</span> <span class="n">fdir</span> <span class="ow">in</span> <span class="n">sm</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="n">sm</span><span class="p">[</span><span class="n">fdir</span><span class="p">]:</span>
+            <span class="n">mntname</span> <span class="o">=</span> <span class="n">sm</span><span class="p">[</span><span class="n">fdir</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">appendentry</span> <span class="ow">or</span> <span class="n">mntname</span> <span class="o">!=</span> <span class="n">scanname</span><span class="p">:</span>
+            <span class="n">mntfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fdir</span><span class="p">,</span> <span class="n">mntname</span> <span class="o">+</span> <span class="n">fext</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">mntfile</span><span class="p">):</span>
+                <span class="n">fl</span> <span class="o">=</span> <span class="n">h5writer</span><span class="o">.</span><span class="n">create_file</span><span class="p">(</span><span class="n">mntfile</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Measurement file &#39;</span><span class="si">%s</span><span class="s2">&#39; created &quot;</span> <span class="o">%</span> <span class="n">mntname</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">fl</span> <span class="o">=</span> <span class="n">h5writer</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">mntfile</span><span class="p">,</span> <span class="n">readonly</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">rt</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">root</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">sname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rt</span><span class="o">.</span><span class="n">names</span><span class="p">():</span>
+                <span class="n">h5writer</span><span class="o">.</span><span class="n">link</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">:/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">entryname</span><span class="p">),</span> <span class="n">rt</span><span class="p">,</span> <span class="n">sname</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Link  &#39;</span><span class="si">%s</span><span class="s2">&#39; in &#39;</span><span class="si">%s</span><span class="s2">&#39; created &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sname</span><span class="p">,</span> <span class="n">mntname</span><span class="p">))</span>
+            <span class="n">rt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">fl</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
 <div class="viewcode-block" id="NXS_FileRecorder._addCustomData"><a class="viewcode-back" href="../../sardananxsrecorder.html#sardananxsrecorder.nxsrecorder.NXS_FileRecorder._addCustomData">[docs]</a>    <span class="k">def</span> <span class="nf">_addCustomData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                        <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; adds custom data to configuration variables, i.e. from macros</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; adds custom data to configuration variables, i.e. from macros</span>
 
 <span class="sd">        :param value: variable value</span>
 <span class="sd">        :type value: `any`</span>
@@ -1378,7 +1573,7 @@
         &copy; Copyright 2012-2018 DESY, Jan Kotanski &lt;jkotan@mail.desy.de&gt;
 
 GNU GENERAL PUBLIC LICENSE, version 3.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br/>
     </p>
   </div>
 </footer>

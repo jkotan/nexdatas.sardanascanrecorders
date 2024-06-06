@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Welcome to sardananxsrecorder’s documentation! &#8212; Sardana NeXus Recorder 3.18.0 documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Welcome to sardananxsrecorder’s documentation! &#8212; Sardana NeXus Recorder 3.24.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="sardananxsrecorder package" href="sardananxsrecorder.html" />
@@ -18,9 +21,9 @@
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
-<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="_static/js/jquery-1.12.4.min.js"></script>
 <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
-<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
 
   </head><body>
@@ -36,7 +39,7 @@
         </button>
         <a class="navbar-brand" href="#">
           Sardana NeXus Recorder</a>
-        <span class="navbar-text navbar-version pull-left"><b>3.18</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>3.24</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -123,8 +126,8 @@
   <div class="row">
     <div class="body col-md-12 content" role="main">
       
-  <div class="section" id="welcome-to-sardananxsrecorder-s-documentation">
-<h1>Welcome to sardananxsrecorder’s documentation!<a class="headerlink" href="#welcome-to-sardananxsrecorder-s-documentation" title="Permalink to this headline">¶</a></h1>
+  <section id="welcome-to-sardananxsrecorder-s-documentation">
+<h1>Welcome to sardananxsrecorder’s documentation!<a class="headerlink" href="#welcome-to-sardananxsrecorder-s-documentation" title="Permalink to this heading">¶</a></h1>
 <p><a class="reference external" href="https://github.com/nexdatas/sardana-nxs-filerecorder/actions"><img alt="" src="https://github.com/nexdatas/sardana-nxs-filerecorder/actions/workflows/tests.yml/badge.svg" /></a>
 <a class="reference external" href="https://nexdatas.github.io/sardana-nxs-filerecorder/index.html"><img alt="" src="https://img.shields.io/badge/Documentation-webpages-ADD8E6.svg" /></a>
 <a class="reference external" href="https://pypi.python.org/pypi/sardana-nxsrecorder"><img alt="" src="https://img.shields.io/pypi/v/sardana-nxsrecorder.svg" /></a>
@@ -136,20 +139,20 @@ NeXDatas Tango Server or packages, i.e. NXSDataWriter, NXSConfigServer, NXSRecSe
 <div class="line">Web page: <a class="reference external" href="https://nexdatas.github.io/sardana-nxs-filerecorder">https://nexdatas.github.io/sardana-nxs-filerecorder</a></div>
 <div class="line">NexDaTaS Web page: <a class="reference external" href="https://nexdatas.github.io">https://nexdatas.github.io</a></div>
 </div>
-<div class="section" id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h2>
 <p>Install the dependencies:</p>
 <div class="line-block">
 <div class="line">sardana, sphinx, NXSDataWriter, NXSConfigServer, NXSRecSelector</div>
 </div>
-<div class="section" id="from-sources">
-<h3>From sources<a class="headerlink" href="#from-sources" title="Permalink to this headline">¶</a></h3>
+<section id="from-sources">
+<h3>From sources<a class="headerlink" href="#from-sources" title="Permalink to this heading">¶</a></h3>
 <p>Download the latest NeXuS Scan Recorder version from</p>
 <div class="line-block">
 <div class="line"><a class="reference external" href="https://github.com/nexdatas/sardana-nxs-filerecorder">https://github.com/nexdatas/sardana-nxs-filerecorder</a></div>
 </div>
 <p>Extract sources and run</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python setup.py install
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>setup.py<span class="w"> </span>install
 </pre></div>
 </div>
 <p>and add an <em>RecorderPath</em> property of <em>MacroServer</em> with its value
@@ -157,60 +160,60 @@ defining the package location, e.g.</p>
 <div class="line-block">
 <div class="line">/usr/lib/python2.7/dist-packages/sardananxsrecorder</div>
 </div>
-</div>
-<div class="section" id="debian-packages">
-<h3>Debian packages<a class="headerlink" href="#debian-packages" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="debian-packages">
+<h3>Debian packages<a class="headerlink" href="#debian-packages" title="Permalink to this heading">¶</a></h3>
 <p>Debian Bookworm, Bullseye, Buster and Ubuntu Lunar, Jammy and Focal packages can be found in the HDRI repository.</p>
 <p>To install the debian packages, add the PGP repository key</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> sudo su
-<span class="gp">$</span> wget -q -O - http://repos.pni-hdri.de/debian_repo.pub.gpg <span class="p">|</span> apt-key add -
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>sudo<span class="w"> </span>su
+<span class="gp">$ </span>wget<span class="w"> </span>-q<span class="w"> </span>-O<span class="w"> </span>-<span class="w"> </span>http://repos.pni-hdri.de/debian_repo.pub.gpg<span class="w"> </span><span class="p">|</span><span class="w"> </span>apt-key<span class="w"> </span>add<span class="w"> </span>-
 </pre></div>
 </div>
 <p>and then download the corresponding source list</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> <span class="nb">cd</span> /etc/apt/sources.list.d
-<span class="gp">$</span> wget http://repos.pni-hdri.de/bookworm-pni-hdri.list
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>/etc/apt/sources.list.d
+<span class="gp">$ </span>wget<span class="w"> </span>http://repos.pni-hdri.de/bookworm-pni-hdri.list
 </pre></div>
 </div>
 <p>Finally, for python2.7</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> apt-get update
-<span class="gp">$</span> apt-get install python-sardana-nxsrecorder
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apt-get<span class="w"> </span>update
+<span class="gp">$ </span>apt-get<span class="w"> </span>install<span class="w"> </span>python-sardana-nxsrecorder
 </pre></div>
 </div>
 <p>and set the RecoderPath property of MacroServer with</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> apt-get install sardana-nxsrecorder
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apt-get<span class="w"> </span>install<span class="w"> </span>sardana-nxsrecorder
 </pre></div>
 </div>
 <p>For python3</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> apt-get update
-<span class="gp">$</span> apt-get install python3-sardana-nxsrecorder
-<span class="gp">$</span> apt-get install sardana-nxsrecorder3
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apt-get<span class="w"> </span>update
+<span class="gp">$ </span>apt-get<span class="w"> </span>install<span class="w"> </span>python3-sardana-nxsrecorder
+<span class="gp">$ </span>apt-get<span class="w"> </span>install<span class="w"> </span>sardana-nxsrecorder3
 </pre></div>
 </div>
 <p>To instal other NexDaTaS packages</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> apt-get install python-nxswriter nxsconfigserver-db python-nxsconfigserver nxsconfigtool python-nxstools nxswriter nxsconfigserver nxsrecselector
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apt-get<span class="w"> </span>install<span class="w"> </span>python-nxswriter<span class="w"> </span>nxsconfigserver-db<span class="w"> </span>python-nxsconfigserver<span class="w"> </span>nxsconfigtool<span class="w"> </span>python-nxstools<span class="w"> </span>nxswriter<span class="w"> </span>nxsconfigserver<span class="w"> </span>nxsrecselector
 </pre></div>
 </div>
 <p>or for python 3</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> apt-get install python3-nxswriter nxsconfigserver-db python3-nxsconfigserver nxsconfigtool3 python3-nxstools nxswriter3 nxsconfigserver3
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apt-get<span class="w"> </span>install<span class="w"> </span>python3-nxswriter<span class="w"> </span>nxsconfigserver-db<span class="w"> </span>python3-nxsconfigserver<span class="w"> </span>nxsconfigtool3<span class="w"> </span>python3-nxstools<span class="w"> </span>nxswriter3<span class="w"> </span>nxsconfigserver3
 </pre></div>
 </div>
 <p>and</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> apt-get install python-nxsrecselector nxsrecselector nxselector
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apt-get<span class="w"> </span>install<span class="w"> </span>python-nxsrecselector<span class="w"> </span>nxsrecselector<span class="w"> </span>nxselector
 </pre></div>
 </div>
 <p>or for python3</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> apt-get install python3-nxsrecselector nxsrecselector3 nxselector3
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>apt-get<span class="w"> </span>install<span class="w"> </span>python3-nxsrecselector<span class="w"> </span>nxsrecselector3<span class="w"> </span>nxselector3
 </pre></div>
 </div>
 <p>for Component Selector for Sardana related packages.</p>
-</div>
-</div>
-<div class="section" id="setting-environment">
-<h2>Setting environment<a class="headerlink" href="#setting-environment" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="setting-saradna">
-<h3>Setting Saradna<a class="headerlink" href="#setting-saradna" title="Permalink to this headline">¶</a></h3>
+</section>
+</section>
+<section id="setting-environment">
+<h2>Setting environment<a class="headerlink" href="#setting-environment" title="Permalink to this heading">¶</a></h2>
+<section id="setting-saradna">
+<h3>Setting Saradna<a class="headerlink" href="#setting-saradna" title="Permalink to this heading">¶</a></h3>
 <p>If sardana is not yet set up run</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> Pool
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>Pool
 </pre></div>
 </div>
 <ul class="simple">
@@ -218,7 +221,7 @@ defining the package location, e.g.</p>
 <li><p>create the new instance</p></li>
 </ul>
 <p>Then wait a while until Pool is started and in a new terminal run</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> MacroServer
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>MacroServer
 </pre></div>
 </div>
 <ul class="simple">
@@ -229,44 +232,46 @@ defining the package location, e.g.</p>
 <p>Next, run Astor and change start-up levels: for Pool to 2,
 for MacroServer to 3 and restart servers.</p>
 <p>Alternatively, terminate Pool and MacroServer in the terminals and run</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> nxsetup start Pool -l2
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>nxsetup<span class="w"> </span>start<span class="w"> </span>Pool<span class="w"> </span>-l2
 </pre></div>
 </div>
 <p>wait until Pool is started and run</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> nxsetup start MacroServer -l3
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>nxsetup<span class="w"> </span>start<span class="w"> </span>MacroServer<span class="w"> </span>-l3
 </pre></div>
 </div>
 <p>Additionally, one can create dummy devices by running <cite>sar_demo</cite> in</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> spock
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>spock
 </pre></div>
 </div>
-</div>
-<div class="section" id="setting-nexus-servers">
-<h3>Setting NeXus Servers<a class="headerlink" href="#setting-nexus-servers" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="setting-nexus-servers">
+<h3>Setting NeXus Servers<a class="headerlink" href="#setting-nexus-servers" title="Permalink to this heading">¶</a></h3>
 <p>To set up  NeXus Servers run</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> nxsetup <span class="nb">set</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>nxsetup<span class="w"> </span><span class="nb">set</span>
 </pre></div>
 </div>
 <p>or</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> nxsetup <span class="nb">set</span> NXSDataWriter
-<span class="gp">$</span> nxsetup <span class="nb">set</span> NXSConfigServer
-<span class="gp">$</span> nxsetup <span class="nb">set</span> NXSRecSelector
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>nxsetup<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NXSDataWriter
+<span class="gp">$ </span>nxsetup<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NXSConfigServer
+<span class="gp">$ </span>nxsetup<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NXSRecSelector
 </pre></div>
 </div>
 <p>for specific servers.</p>
 <p>If the <cite>RecoderPath</cite> property of MacroServer is not set one can do it by</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> nxsetup add-recorder-path /usr/lib/python2.7/dist-packages/sardananxsrecorder
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>nxsetup<span class="w"> </span>add-recorder-path<span class="w"> </span>/usr/lib/python2.7/dist-packages/sardananxsrecorder
 </pre></div>
 </div>
 <p>where the path should point the <cite>sardananxsrecorder</cite> package.</p>
-</div>
-</div>
-<div class="section" id="sardana-variables">
-<h2>Sardana Variables<a class="headerlink" href="#sardana-variables" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+<section id="sardana-variables">
+<h2>Sardana Variables<a class="headerlink" href="#sardana-variables" title="Permalink to this heading">¶</a></h2>
 <p>The NeXus file recorder uses the following sardana environment variables</p>
 <ul class="simple">
 <li><p><strong>ActiveMntGrp</strong> <em>(str)</em> - active measurement group</p></li>
 <li><p><strong>ScanID</strong> <em>(int)</em> - the last scan identifier number, default: <code class="docutils literal notranslate"><span class="pre">-1</span></code></p></li>
+<li><p><strong>ScanDir</strong> <em>(str)</em> - the scan directory</p></li>
+<li><p><strong>ScanFile</strong> <em>(list)</em> - a list of scan files</p></li>
 <li><p><strong>NeXusSelectorDevice</strong> <em>(str)</em> - NXSRecSelector tango device if more installed, otherwise first one found</p></li>
 <li><p><strong>NXSAppendSciCatDataset</strong> <em>(bool)</em> - append scan name to scicat dataset list file, default: <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
 <li><p><strong>BeamtimeFilePath</strong> <em>(str)</em> - beamtime file path to search beamtime metadata file, default: <code class="docutils literal notranslate"><span class="pre">&quot;/gpfs/current&quot;</span></code></p></li>
@@ -277,28 +282,44 @@ for MacroServer to 3 and restart servers.</p>
 <li><p><strong>SciCatDatasetListFileLocal</strong> <em>(bool)</em> - add the hostname to the scicat dataset list file extension, default: <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
 <li><p><strong>SciCatAutoGrouping</strong> <em>(bool)</em> - group all scans with the measurement name set to the base scan filename, default: <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
 <li><p><strong>MetadataScript</strong> <em>(str)</em> - a python module file name containing <code class="docutils literal notranslate"><span class="pre">main()</span></code>  which provides a dictionary with user metadata stored in the INIT mode, default: <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p></li>
+<li><p><strong>ScicatMeasurements</strong> <em>(dict)</em> - a dictionary of  measurement names indexed by <code class="docutils literal notranslate"><span class="pre">ScanDir</span></code> and  used by <code class="docutils literal notranslate"><span class="pre">scingestor</span></code>, default: <code class="docutils literal notranslate"><span class="pre">{}</span></code></p></li>
+<li><p><strong>CreateMeasurementFile</strong> <em>(bool)</em> - create a measurement file with its filename releated to <code class="docutils literal notranslate"><span class="pre">ScicatMeasurements</span></code> or <code class="docutils literal notranslate"><span class="pre">ScanFile</span></code>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
+<li><p><strong>NeXusSkipAcquisitionModes</strong> <em>(list)</em> - a list of strategy modes for which acquisition is skip</p></li>
+<li><p><strong>NeXusWriterProperties</strong> <em>(dict)</em> - a dictionary of TangoDataWriter (NXSDataWriter) properties (starting with a small letter)</p></li>
 </ul>
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="sardananxsrecorder.html">sardananxsrecorder package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="sardananxsrecorder.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sardananxsrecorder.html#module-sardananxsrecorder.nxsrecorder">sardananxsrecorder.nxsrecorder module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sardananxsrecorder.html#module-sardananxsrecorder.nxsrecorder">sardananxsrecorder.nxsrecorder module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sardananxsrecorder.html#sardananxsrecorder.nxsrecorder.NXS_FileRecorder"><code class="docutils literal notranslate"><span class="pre">NXS_FileRecorder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="sardananxsrecorder.html#sardananxsrecorder.nxsrecorder.NXS_FileRecorder._addCustomData"><code class="docutils literal notranslate"><span class="pre">NXS_FileRecorder._addCustomData()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sardananxsrecorder.html#sardananxsrecorder.nxsrecorder.NXS_FileRecorder._endRecordList"><code class="docutils literal notranslate"><span class="pre">NXS_FileRecorder._endRecordList()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sardananxsrecorder.html#sardananxsrecorder.nxsrecorder.NXS_FileRecorder._startRecordList"><code class="docutils literal notranslate"><span class="pre">NXS_FileRecorder._startRecordList()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sardananxsrecorder.html#sardananxsrecorder.nxsrecorder.NXS_FileRecorder._writeRecord"><code class="docutils literal notranslate"><span class="pre">NXS_FileRecorder._writeRecord()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sardananxsrecorder.html#sardananxsrecorder.nxsrecorder.NXS_FileRecorder.formats"><code class="docutils literal notranslate"><span class="pre">NXS_FileRecorder.formats</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sardananxsrecorder.html#sardananxsrecorder.nxsrecorder.NXS_FileRecorder.getFormat"><code class="docutils literal notranslate"><span class="pre">NXS_FileRecorder.getFormat()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="sardananxsrecorder.html#sardananxsrecorder.nxsrecorder.NXS_FileRecorder.numpyEncoder"><code class="docutils literal notranslate"><span class="pre">NXS_FileRecorder.numpyEncoder</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="sardananxsrecorder.html#module-sardananxsrecorder">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </div>
-</div>
-</div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+</section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading">¶</a></h1>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
-</div>
+</section>
 
 
     </div>
@@ -315,7 +336,7 @@ for MacroServer to 3 and restart servers.</p>
         &copy; Copyright 2012-2018 DESY, Jan Kotanski &lt;jkotan@mail.desy.de&gt;
 
 GNU GENERAL PUBLIC LICENSE, version 3.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br/>
     </p>
   </div>
 </footer>
