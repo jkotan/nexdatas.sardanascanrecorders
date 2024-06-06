@@ -226,4 +226,5 @@ The NeXus file recorder uses the following sardana environment variables
 * **CreateMeasurementFile** *(bool)* - create a measurement file with its filename releated to ``ScicatMeasurements`` or ``ScanFile``, default: ``False``
 * **NeXusSkipAcquisitionModes** *(list)* - a list of strategy modes for which acquisition is skip
 * **NeXusWriterProperties** *(dict)* - a dictionary of TangoDataWriter (NXSDataWriter) properties (starting with a small letter)
+* **NeXusMeshScanID** *(int)* - ScanID used for composed scans e.g. mesh scan combined from many linear scans
   
