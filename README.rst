@@ -225,4 +225,5 @@ The NeXus file recorder uses the following sardana environment variables
 * **ScicatMeasurements** *(dict)* - a dictionary of  measurement names indexed by ``ScanDir`` and  used by ``scingestor``, default: ``{}``
 * **CreateMeasurementFile** *(bool)* - create a measurement file with its filename releated to ``ScicatMeasurements`` or ``ScanFile``, default: ``False``
 * **NeXusSkipAcquisitionModes** *(list)* - a list of strategy modes for which acquisition is skip
+* **NeXusWriterProperties** *(dict)* - a dictionary of TangoDataWriter (NXSDataWriter) properties (starting with a small letter)
   

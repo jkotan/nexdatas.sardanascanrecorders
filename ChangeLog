@@ -1,3 +1,7 @@
+2024-06-06 Jan Kotanski <jankotan@gmail.com>
+	* set TangoDataWriter properties from NeXusWriterProperties variable (#121)
+	* tagged as 3.24.0
+
 2024-06-04 Jan Kotanski <jankotan@gmail.com>
 	* skip acquisition for the modes listed in NeXusSkipAcquisitionModes variable (#117)
 	* tagged as 3.23.0
