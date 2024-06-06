@@ -543,7 +543,19 @@ class NXS_FileRecorder(BaseFileRecorder):
             if self.__nexuswriter_device is None:
                 from nxswriter import TangoDataWriter
                 self.__nexuswriter_device = TangoDataWriter.TangoDataWriter()
-
+                try:
+                    properties = dict(
+                        self.__getEnvVar("NeXusWriterProperties", {}))
+                except Exception as e:
+                    self.warning(
+                        "Cannot load NeXusWriterProperties %s" % (str(e)))
+                    self.__macro().warning(
+                        "Cannot load NeXusWriterProperties %s" % (str(e)))
+                    properties = {}
+                for ky, vl in properties.items():
+                    if hasattr(self.__nexuswriter_device, ky):
+                        setattr(self.__nexuswriter_device, ky, vl)
+                    
     def __get_alias(self, name):
         """ provides a device alias
 
