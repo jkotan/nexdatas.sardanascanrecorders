@@ -555,7 +555,7 @@ class NXS_FileRecorder(BaseFileRecorder):
                 for ky, vl in properties.items():
                     if hasattr(self.__nexuswriter_device, ky):
                         setattr(self.__nexuswriter_device, ky, vl)
-                    
+
     def __get_alias(self, name):
         """ provides a device alias
 
