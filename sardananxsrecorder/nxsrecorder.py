@@ -180,7 +180,7 @@ class NXS_FileRecorder(BaseFileRecorder):
         if "INIT" in self.skipAcquisitionModes:
             if self.__macro:
                 serial = self.__macro().getEnv('NeXusMeshScanID', None)
-        if serial is not None:
+        if serial is None:
             if scanID is None:
                 serial = self.recordlist.getEnvironValue('serialno')
             elif scanID >= 0:
