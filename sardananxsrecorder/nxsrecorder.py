@@ -152,11 +152,14 @@ class NXS_FileRecorder(BaseFileRecorder):
         #: (:obj:`str`) module lable
         self.__moduleLabel = 'module'
 
+        #: (:obj:`int`) serialno
+        self.__serial = 0
+
         #: (:obj:`dict` <:obj:`str` , :obj:`str`>) NeXus configuration
         self.__conf = {}
 
         #: (:obj:`list` <:obj:`str`>) skip Acquisition Modes
-        self.skipAcquisitionModes = []
+        self.skipAcquisitionModes = self.__skipAcquisitionModes()
 
         #: (:obj:`dict` <:obj:`str` , `any`>) User data
         self.__udata = None
@@ -171,6 +174,25 @@ class NXS_FileRecorder(BaseFileRecorder):
             if "ScanID" in self.__env.keys() else -1
         self.__setFileName(
             self.__base_filename, not appendentry, scanID)
+
+    def _serial(self, scanID):
+        serial = None
+        if "INIT" in self.skipAcquisitionModes:
+            if self.__macro:
+                serial = self.__macro().getEnv('NeXusMeshScanID', None)
+        if serial is None:
+            if scanID is None:
+                serial = self.recordlist.getEnvironValue('serialno')
+            elif scanID >= 0:
+                if isarver >= 304 or isarver == 0:
+                    serial = scanID
+                else:
+                    serial = scanID + 1
+        if self.skipAcquisitionModes and \
+           "INIT" not in self.skipAcquisitionModes:
+            if self.__macro:
+                self.__macro().setEnv('NeXusMeshScanID', serial)
+        return serial
 
     def __command(self, server, command, *args):
         """ execute tango server (or python object) command
@@ -378,27 +400,22 @@ class NXS_FileRecorder(BaseFileRecorder):
 
         subs = (len([None for _ in list(re.finditer('%', filename))]) == 1)
         # construct the filename, e.g. : /dir/subdir/etcdir/prefix_00123.nxs
-        if scanID is None:
-            serial = self.recordlist.getEnvironValue('serialno')
-        elif scanID >= 0:
-            if isarver >= 304 or isarver == 0:
-                serial = scanID
-            else:
-                serial = scanID + 1
+        self.__serial = self._serial(scanID)
 
         if subs:
             try:
                 #: output file name
-                self.filename = filename % serial
+                self.filename = filename % self.__serial
             except Exception:
                 subs = False
         if not self.__raw_filename:
-            self.__raw_filename = self.__rawfilename(serial)
+            self.__raw_filename = self.__rawfilename(self.__serial)
         self.debug('Raw Filename: %s' % str(self.__raw_filename))
         if not subs and self.__raw_filename and \
            "{ScanID" in self.__raw_filename:
             try:
-                self.filename = self.__raw_filename.format(ScanID=serial)
+                self.filename = self.__raw_filename.format(
+                    ScanID=self.__serial)
                 subs = True
             except Exception:
                 pass
@@ -409,10 +426,12 @@ class NXS_FileRecorder(BaseFileRecorder):
                    filename[-4].rpartition(".")[0] and \
                    filename[-4].rpartition(".")[2] in self.formats.keys():
                     tpl = filename[-4].rpartition(".")
-                    self.filename = "%s_%05d.%s.tmp" % (tpl[0], serial, tpl[2])
+                    self.filename = "%s_%05d.%s.tmp" % (
+                        tpl[0], self.__serial, tpl[2])
                 else:
                     tpl = filename.rpartition('.')
-                    self.filename = "%s_%05d.%s" % (tpl[0], serial, tpl[2])
+                    self.filename = "%s_%05d.%s" % (
+                        tpl[0], self.__serial, tpl[2])
             else:
                 self.filename = filename
 
@@ -990,7 +1009,7 @@ class NXS_FileRecorder(BaseFileRecorder):
             appendscanid = not self.__setFileName(
                 self.__base_filename, not appendentry)
             envRec = self.recordlist.getEnviron()
-            self.__vars["vars"]["serialno"] = ("_%05i" % envRec["serialno"]) \
+            self.__vars["vars"]["serialno"] = ("_%05i" % self.__serial) \
                 if appendscanid else ""
             self.__vars["vars"]["scan_id"] = envRec["serialno"]
             self.__vars["vars"]["scan_title"] = envRec["title"]
@@ -1014,7 +1033,7 @@ class NXS_FileRecorder(BaseFileRecorder):
             # self.debug('XML: %s' % str(cnfxml))
             self.__removeDynamicComponent()
 
-            self.__vars["data"]["serialno"] = envRec["serialno"]
+            self.__vars["data"]["serialno"] = self.__serial
             self.__vars["data"]["scan_title"] = envRec["title"]
             if self.__macro:
                 if hasattr(self.__macro(), "integ_time"):
@@ -1310,7 +1329,7 @@ class NXS_FileRecorder(BaseFileRecorder):
     def __appendSciCatDataset(self, hostname=None):
         """ append dataset to SciCat ingestion list """
 
-        sid = self.__vars["vars"]["scan_id"]
+        sid = self.__serial
         fdir, fname = os.path.split(self.filename)
         sname, fext = os.path.splitext(fname)
         beamtimeid = self.beamtimeid()
@@ -1342,7 +1361,7 @@ class NXS_FileRecorder(BaseFileRecorder):
         if appendentry is True and \
                 '%' not in self.__raw_filename and \
                 "{ScanID" not in self.__raw_filename:
-            sid = self.__vars["vars"]["scan_id"]
+            sid = self.__serial
             sname = "%s::/%s_%05i;%s_%05i" % (
                 scanname, entryname, sid, scanname, sid)
         if "INIT" in self.skipAcquisitionModes:
@@ -1381,7 +1400,7 @@ class NXS_FileRecorder(BaseFileRecorder):
     def __createMeasurementFile(self):
         """ create measurement file """
 
-        sid = self.__vars["vars"]["scan_id"]
+        sid = self.__serial
         fdir, fname = os.path.split(self.filename)
         sname, fext = os.path.splitext(fname)
         # beamtimeid = self.beamtimeid()
