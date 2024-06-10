@@ -159,12 +159,12 @@ class NXS_FileRecorder(BaseFileRecorder):
         self.__conf = {}
 
         #: (:obj:`list` <:obj:`str`>) skip Acquisition Modes
-        self.skipAcquisitionModes = self.__varianbleList(
-            "NeXusSkipAcquisitionModed")
+        self.skipAcquisitionModes = self.__variableList(
+            "NeXusSkipAcquisitionModes")
 
         #: (:obj:`list` <:obj:`str`>) acquisition Modes
-        self.acquisitionModes = self.__varianbleList(
-            "NeXusAcquisitionMode")
+        self.acquisitionModes = self.__variableList(
+            "NeXusAcquisitionModes")
 
         #: (:obj:`dict` <:obj:`str` , `any`>) User data
         self.__udata = None
@@ -1065,9 +1065,9 @@ class NXS_FileRecorder(BaseFileRecorder):
             # self.debug('START_DATA: %s' % str(envRec))
 
             self.__nexuswriter_device.jsonrecord = rec
-            self.skipAcquisitionModes = self.__varianbleList(
+            self.skipAcquisitionModes = self.__variableList(
                 "NeXusSkipAcquisitionModed")
-            self.acquisitionModes = self.__varianbleList(
+            self.acquisitionModes = self.__variableList(
                 "NeXusAcquisitionMode")
             if "INIT" in self.skipAcquisitionModes or \
                "NOINIT" in self.acquisitionModes:
