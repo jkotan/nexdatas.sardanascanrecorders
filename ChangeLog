@@ -1,4 +1,8 @@
 2024-06-07 Jan Kotanski <jankotan@gmail.com>
+	* add NeXusAcquisitionModes variable (#127)
+	* tagged as 3.25.0
+
+2024-06-07 Jan Kotanski <jankotan@gmail.com>
 	* set NeXusMeshScanID variable (#124)
 	* tagged as 3.25.0
 

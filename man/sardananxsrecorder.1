@@ -27,7 +27,7 @@ level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .in \\n[rst2man-indent\\n[rst2man-indent-level]]u
 ..
-.TH "SARDANANXSRECORDER" "1" "Jun 06, 2024" "3.25" "Sardana NeXus Recorder"
+.TH "SARDANANXSRECORDER" "1" "Jun 10, 2024" "3.26" "Sardana NeXus Recorder"
 .SH NAME
 sardananxsrecorder \- sardananxsrecorder Documentation
 .sp
@@ -354,11 +354,13 @@ The NeXus file recorder uses the following sardana environment variables
 .IP \(bu 2
 \fBCreateMeasurementFile\fP \fI(bool)\fP \- create a measurement file with its filename releated to \fBScicatMeasurements\fP or \fBScanFile\fP, default: \fBFalse\fP
 .IP \(bu 2
-\fBNeXusSkipAcquisitionModes\fP \fI(list)\fP \- a list of strategy modes for which acquisition is skip
-.IP \(bu 2
 \fBNeXusWriterProperties\fP \fI(dict)\fP \- a dictionary of TangoDataWriter (NXSDataWriter) properties (starting with a small letter)
 .IP \(bu 2
 \fBNeXusMeshScanID\fP \fI(int)\fP \- ScanID used for composed scans e.g. mesh scan combined from many linear scans
+.IP \(bu 2
+\fBNeXusAcquisitionModes\fP \fI(list)\fP \- a list of strategy modes e.g. \fBINIT\fP, \fBNOINIT\fP, \fBNOSTEP\fP, \fBNOFINAL\fP, \fBVDS\fP  separated by commas
+.IP \(bu 2
+\fBNeXusSkipAcquisitionModes\fP \fI(list)\fP \- a list of strategy modes for which acquisition is skip  separated by commas
 .UNINDENT
 .sp
 Contents:
