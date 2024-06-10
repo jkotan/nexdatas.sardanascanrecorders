@@ -1057,7 +1057,7 @@ class NXS_FileRecorder(BaseFileRecorder):
 
             self.__nexuswriter_device.jsonrecord = rec
             self.acquisitionModes = self.__variableList(
-                "NeXusAcquisitionMode")
+                "NeXusAcquisitionModes")
             if "NOINIT" in self.acquisitionModes:
                 self.__nexuswriter_device.skipAcquisition = True
 
