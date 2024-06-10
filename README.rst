@@ -224,7 +224,7 @@ The NeXus file recorder uses the following sardana environment variables
 * **MetadataScript** *(str)* - a python module file name containing ``main()``  which provides a dictionary with user metadata stored in the INIT mode, default: ``""``
 * **ScicatMeasurements** *(dict)* - a dictionary of  measurement names indexed by ``ScanDir`` and  used by ``scingestor``, default: ``{}``
 * **CreateMeasurementFile** *(bool)* - create a measurement file with its filename releated to ``ScicatMeasurements`` or ``ScanFile``, default: ``False``
-* **NeXusSkipAcquisitionModes** *(list)* - a list of strategy modes for which acquisition is skip
 * **NeXusWriterProperties** *(dict)* - a dictionary of TangoDataWriter (NXSDataWriter) properties (starting with a small letter)
 * **NeXusMeshScanID** *(int)* - ScanID used for composed scans e.g. mesh scan combined from many linear scans
+* **NeXusAcquisitionModes** *(list)* - a list of strategy modes e.g. ``INIT``, ``NOINIT``, ``NOSTEP``, ``NOFINAL``, ``VDS``  separated by commas
   

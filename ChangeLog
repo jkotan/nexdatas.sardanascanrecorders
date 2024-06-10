@@ -1,3 +1,7 @@
+2024-06-19 Jan Kotanski <jankotan@gmail.com>
+	* replace NeXusSkipAcquisitionModes by NeXusAcquisitionModes variable (#127)
+	* tagged as 3.26.0
+
 2024-06-07 Jan Kotanski <jankotan@gmail.com>
 	* set NeXusMeshScanID variable (#124)
 	* tagged as 3.25.0
