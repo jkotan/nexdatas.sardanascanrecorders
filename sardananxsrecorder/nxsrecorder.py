@@ -159,7 +159,12 @@ class NXS_FileRecorder(BaseFileRecorder):
         self.__conf = {}
 
         #: (:obj:`list` <:obj:`str`>) skip Acquisition Modes
-        self.skipAcquisitionModes = self.__skipAcquisitionModes()
+        self.skipAcquisitionModes = self.__varianbleList(
+            "NeXusSkipAcquisitionModed")
+
+        #: (:obj:`list` <:obj:`str`>) acquisition Modes
+        self.acquisitionModes = self.__varianbleList(
+            "NeXusAcquisitionMode")
 
         #: (:obj:`dict` <:obj:`str` , `any`>) User data
         self.__udata = None
@@ -177,7 +182,8 @@ class NXS_FileRecorder(BaseFileRecorder):
 
     def _serial(self, scanID):
         serial = None
-        if "INIT" in self.skipAcquisitionModes:
+        if "INIT" in self.skipAcquisitionModes or \
+           "NOINIT" in self.acquisitionModes:
             if self.__macro:
                 serial = self.__macro().getEnv('NeXusMeshScanID', None)
         if serial is None:
@@ -188,8 +194,9 @@ class NXS_FileRecorder(BaseFileRecorder):
                     serial = scanID
                 else:
                     serial = scanID + 1
-        if self.skipAcquisitionModes and \
-           "INIT" not in self.skipAcquisitionModes:
+        if (self.skipAcquisitionModes and
+                "INIT" not in self.skipAcquisitionModes) or \
+                ("INIT" in self.acquisitionModes):
             if self.__macro:
                 self.__macro().setEnv('NeXusMeshScanID', serial)
         return serial
@@ -1012,6 +1019,10 @@ class NXS_FileRecorder(BaseFileRecorder):
             self.__vars["vars"]["serialno"] = ("_%05i" % self.__serial) \
                 if appendscanid else ""
             self.__vars["vars"]["scan_id"] = envRec["serialno"]
+            self.__vars["vars"]["skip_acq_modes"] = \
+                ",".join(self.skipAcquisitionModes or [])
+            self.__vars["vars"]["acq_modes"] = \
+                ",".join(self.acquisitionModes or [])
             self.__vars["vars"]["scan_title"] = envRec["title"]
             if self.__macro:
                 if hasattr(self.__macro(), "integ_time"):
@@ -1054,8 +1065,12 @@ class NXS_FileRecorder(BaseFileRecorder):
             # self.debug('START_DATA: %s' % str(envRec))
 
             self.__nexuswriter_device.jsonrecord = rec
-            self.skipAcquisitionModes = self.__skipAcquisitionModes()
-            if "INIT" in self.skipAcquisitionModes:
+            self.skipAcquisitionModes = self.__varianbleList(
+                "NeXusSkipAcquisitionModed")
+            self.acquisitionModes = self.__varianbleList(
+                "NeXusAcquisitionMode")
+            if "INIT" in self.skipAcquisitionModes or \
+               "NOINIT" in self.acquisitionModes:
                 self.__nexuswriter_device.skipAcquisition = True
 
             self.__command(self.__nexuswriter_device, "openEntry")
@@ -1144,7 +1159,8 @@ class NXS_FileRecorder(BaseFileRecorder):
             rec = json.dumps(
                 envrecord, cls=NXS_FileRecorder.numpyEncoder)
             self.__nexuswriter_device.jsonrecord = rec
-            if "STEP" in self.skipAcquisitionModes:
+            if "STEP" in self.skipAcquisitionModes or \
+               "NOSTEP" in self.acquisitionModes:
                 self.__nexuswriter_device.skipAcquisition = True
 
             # self.debug('DATA: {"data":%s}' % json.dumps(
@@ -1214,7 +1230,8 @@ class NXS_FileRecorder(BaseFileRecorder):
             rec = json.dumps(
                 envrecord, cls=NXS_FileRecorder.numpyEncoder)
             self.__nexuswriter_device.jsonrecord = rec
-            if "FINAL" in self.skipAcquisitionModes:
+            if "FINAL" in self.skipAcquisitionModes or \
+               "NOFINAL" in self.acquisitionModes:
                 self.__nexuswriter_device.skipAcquisition = True
             self.__command(self.__nexuswriter_device, "closeEntry")
             self.__command(self.__nexuswriter_device, "closeFile")
@@ -1274,6 +1291,19 @@ class NXS_FileRecorder(BaseFileRecorder):
         if skip_acq:
             self.debug('Skip Acquisition Modes: %s' % str(skip_acq))
         return skip_acq
+
+    def __varaibleList(self, variable='NeXusAcquisitionModes'):
+        """ read variable list
+        """
+        try:
+            msvar = self.__macro().getEnv(variable)
+        except Exception:
+            msvar = []
+        if isinstance(msvar, str):
+            msvar = re.split(r"[-;,.\s]\s*", msvar)
+        if msvar:
+            self.debug('%s: %s' % (variable, str(msvar)))
+        return msvar
 
     def __rawfilename(self, serial):
         """ find scan name
