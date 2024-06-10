@@ -227,5 +227,4 @@ The NeXus file recorder uses the following sardana environment variables
 * **NeXusWriterProperties** *(dict)* - a dictionary of TangoDataWriter (NXSDataWriter) properties (starting with a small letter)
 * **NeXusMeshScanID** *(int)* - ScanID used for composed scans e.g. mesh scan combined from many linear scans
 * **NeXusAcquisitionModes** *(list)* - a list of strategy modes e.g. ``INIT``, ``NOINIT``, ``NOSTEP``, ``NOFINAL``, ``VDS``  separated by commas
-* **NeXusSkipAcquisitionModes** *(list)* - a list of strategy modes for which acquisition is skip  separated by commas
   
