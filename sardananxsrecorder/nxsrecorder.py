@@ -1292,7 +1292,7 @@ class NXS_FileRecorder(BaseFileRecorder):
             self.debug('Skip Acquisition Modes: %s' % str(skip_acq))
         return skip_acq
 
-    def __varaibleList(self, variable='NeXusAcquisitionModes'):
+    def __variableList(self, variable='NeXusAcquisitionModes'):
         """ read variable list
         """
         try:
