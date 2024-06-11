@@ -1014,7 +1014,7 @@ class NXS_FileRecorder(BaseFileRecorder):
             self.__vars["vars"]["serialno"] = ("_%05i" % self.__serial) \
                 if appendscanid else ""
             self.__vars["vars"]["scan_id"] = envRec["serialno"]
-            self.__vars["vars"]["writer_modes"] = \
+            self.__vars["vars"]["acq_modes"] = \
                 ",".join(self.writerModes or [])
             self.__vars["vars"]["scan_title"] = envRec["title"]
             if self.__macro:
