@@ -1,3 +1,7 @@
+2024-07-03 Jan Kotanski <jankotan@gmail.com>
+	* fix for summer time parsing (#132)
+	* tagged as 3.26.1
+
 2024-06-19 Jan Kotanski <jankotan@gmail.com>
 	* replace NeXusSkipAcquisitionModes by NeXusWriterModes variable (#127)
 	* tagged as 3.26.0
