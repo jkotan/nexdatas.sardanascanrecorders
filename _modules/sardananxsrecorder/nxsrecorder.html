@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>sardananxsrecorder.nxsrecorder &#8212; Sardana NeXus Recorder 3.25.0 documentation</title>
+    <title>sardananxsrecorder.nxsrecorder &#8212; Sardana NeXus Recorder 3.26.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css" />
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
@@ -37,7 +37,7 @@
         </button>
         <a class="navbar-brand" href="../../index.html">
           Sardana NeXus Recorder</a>
-        <span class="navbar-text navbar-version pull-left"><b>3.25</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>3.26</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -132,7 +132,6 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">pytz</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">weakref</span>
 <span class="kn">import</span> <span class="nn">socket</span>
@@ -264,8 +263,9 @@
         <span class="c1">#: (:obj:`dict` &lt;:obj:`str` , :obj:`str`&gt;) NeXus configuration</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__conf</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="c1">#: (:obj:`list` &lt;:obj:`str`&gt;) skip Acquisition Modes</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">skipAcquisitionModes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__skipAcquisitionModes</span><span class="p">()</span>
+        <span class="c1">#: (:obj:`list` &lt;:obj:`str`&gt;) acquisition Modes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">writerModes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__variableList</span><span class="p">(</span>
+            <span class="s2">&quot;NeXusWriterModes&quot;</span><span class="p">)</span>
 
         <span class="c1">#: (:obj:`dict` &lt;:obj:`str` , `any`&gt;) User data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__udata</span> <span class="o">=</span> <span class="kc">None</span>
@@ -283,7 +283,8 @@
 
     <span class="k">def</span> <span class="nf">_serial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scanID</span><span class="p">):</span>
         <span class="n">serial</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="s2">&quot;INIT&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">skipAcquisitionModes</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;NOINIT&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">writerModes</span> <span class="ow">and</span> \
+           <span class="s2">&quot;MESH&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">writerModes</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">:</span>
                 <span class="n">serial</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">()</span><span class="o">.</span><span class="n">getEnv</span><span class="p">(</span><span class="s1">&#39;NeXusMeshScanID&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">serial</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -294,8 +295,8 @@
                     <span class="n">serial</span> <span class="o">=</span> <span class="n">scanID</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">serial</span> <span class="o">=</span> <span class="n">scanID</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">skipAcquisitionModes</span> <span class="ow">and</span> \
-           <span class="s2">&quot;INIT&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">skipAcquisitionModes</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;MESH&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">writerModes</span> <span class="ow">and</span> \
+           <span class="s2">&quot;NOINIT&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">writerModes</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">()</span><span class="o">.</span><span class="n">setEnv</span><span class="p">(</span><span class="s1">&#39;NeXusMeshScanID&#39;</span><span class="p">,</span> <span class="n">serial</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">serial</span>
@@ -1118,6 +1119,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">__vars</span><span class="p">[</span><span class="s2">&quot;vars&quot;</span><span class="p">][</span><span class="s2">&quot;serialno&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;_</span><span class="si">%05i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__serial</span><span class="p">)</span> \
                 <span class="k">if</span> <span class="n">appendscanid</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__vars</span><span class="p">[</span><span class="s2">&quot;vars&quot;</span><span class="p">][</span><span class="s2">&quot;scan_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">envRec</span><span class="p">[</span><span class="s2">&quot;serialno&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__vars</span><span class="p">[</span><span class="s2">&quot;vars&quot;</span><span class="p">][</span><span class="s2">&quot;acq_modes&quot;</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">writerModes</span> <span class="ow">or</span> <span class="p">[])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__vars</span><span class="p">[</span><span class="s2">&quot;vars&quot;</span><span class="p">][</span><span class="s2">&quot;scan_title&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">envRec</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">(),</span> <span class="s2">&quot;integ_time&quot;</span><span class="p">):</span>
@@ -1160,8 +1163,9 @@
             <span class="c1"># self.debug(&#39;START_DATA: %s&#39; % str(envRec))</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span><span class="o">.</span><span class="n">jsonrecord</span> <span class="o">=</span> <span class="n">rec</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">skipAcquisitionModes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__skipAcquisitionModes</span><span class="p">()</span>
-            <span class="k">if</span> <span class="s2">&quot;INIT&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">skipAcquisitionModes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">writerModes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__variableList</span><span class="p">(</span>
+                <span class="s2">&quot;NeXusWriterModes&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;NOINIT&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">writerModes</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span><span class="o">.</span><span class="n">skipAcquisition</span> <span class="o">=</span> <span class="kc">True</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">__command</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span><span class="p">,</span> <span class="s2">&quot;openEntry&quot;</span><span class="p">)</span>
@@ -1250,7 +1254,7 @@
             <span class="n">rec</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
                 <span class="n">envrecord</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">NXS_FileRecorder</span><span class="o">.</span><span class="n">numpyEncoder</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span><span class="o">.</span><span class="n">jsonrecord</span> <span class="o">=</span> <span class="n">rec</span>
-            <span class="k">if</span> <span class="s2">&quot;STEP&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">skipAcquisitionModes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;NOSTEP&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">writerModes</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span><span class="o">.</span><span class="n">skipAcquisition</span> <span class="o">=</span> <span class="kc">True</span>
 
             <span class="c1"># self.debug(&#39;DATA: {&quot;data&quot;:%s}&#39; % json.dumps(</span>
@@ -1276,8 +1280,16 @@
 <span class="sd">        :returns: formatted time string</span>
 <span class="sd">        :rtype: :obj:`str`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%S.</span><span class="si">%f</span><span class="s1">%z&#39;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">tz</span> <span class="o">=</span> <span class="n">pytz</span><span class="o">.</span><span class="n">timezone</span><span class="p">(</span><span class="n">tzone</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">):</span>
+                <span class="kn">import</span> <span class="nn">zoneinfo</span>
+                <span class="n">tz</span> <span class="o">=</span> <span class="n">zoneinfo</span><span class="o">.</span><span class="n">ZoneInfo</span><span class="p">(</span><span class="n">tzone</span><span class="p">)</span>
+                <span class="n">starttime</span> <span class="o">=</span> <span class="n">mtime</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">tz</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">pytz</span>
+                <span class="n">tz</span> <span class="o">=</span> <span class="n">pytz</span><span class="o">.</span><span class="n">timezone</span><span class="p">(</span><span class="n">tzone</span><span class="p">)</span>
+                <span class="n">starttime</span> <span class="o">=</span> <span class="n">tz</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">mtime</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">&quot;Wrong TimeZone. &quot;</span>
@@ -1286,13 +1298,15 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">()</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                     <span class="s2">&quot;Wrong TimeZone. &quot;</span>
                     <span class="s2">&quot;The time zone set to `</span><span class="si">%s</span><span class="s2">`&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__timezone</span><span class="p">)</span>
-            <span class="n">tz</span> <span class="o">=</span> <span class="n">pytz</span><span class="o">.</span><span class="n">timezone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__timezone</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">):</span>
+                <span class="kn">import</span> <span class="nn">zoneinfo</span>
+                <span class="n">tz</span> <span class="o">=</span> <span class="n">zoneinfo</span><span class="o">.</span><span class="n">ZoneInfo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__timezone</span><span class="p">)</span>
+                <span class="n">starttime</span> <span class="o">=</span> <span class="n">mtime</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">tz</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">pytz</span>
+                <span class="n">tz</span> <span class="o">=</span> <span class="n">pytz</span><span class="o">.</span><span class="n">timezone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__timezone</span><span class="p">)</span>
+                <span class="n">starttime</span> <span class="o">=</span> <span class="n">tz</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">mtime</span><span class="p">)</span>
 
-        <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%S.</span><span class="si">%f</span><span class="s1">%z&#39;</span>
-        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">):</span>
-            <span class="n">starttime</span> <span class="o">=</span> <span class="n">mtime</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">tz</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">starttime</span> <span class="o">=</span> <span class="n">tz</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">mtime</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">starttime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">fmt</span><span class="p">))</span>
 
 <div class="viewcode-block" id="NXS_FileRecorder._endRecordList"><a class="viewcode-back" href="../../sardananxsrecorder.html#sardananxsrecorder.nxsrecorder.NXS_FileRecorder._endRecordList">[docs]</a>    <span class="k">def</span> <span class="nf">_endRecordList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recordlist</span><span class="p">):</span>
@@ -1320,7 +1334,7 @@
             <span class="n">rec</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
                 <span class="n">envrecord</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">NXS_FileRecorder</span><span class="o">.</span><span class="n">numpyEncoder</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span><span class="o">.</span><span class="n">jsonrecord</span> <span class="o">=</span> <span class="n">rec</span>
-            <span class="k">if</span> <span class="s2">&quot;FINAL&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">skipAcquisitionModes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;NOFINAL&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">writerModes</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span><span class="o">.</span><span class="n">skipAcquisition</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__command</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span><span class="p">,</span> <span class="s2">&quot;closeEntry&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__command</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__nexuswriter_device</span><span class="p">,</span> <span class="s2">&quot;closeFile&quot;</span><span class="p">)</span>
@@ -1368,18 +1382,18 @@
         <span class="n">beamtimeid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beamtime_id</span><span class="p">(</span><span class="n">bmtfpath</span><span class="p">,</span> <span class="n">bmtfprefix</span><span class="p">,</span> <span class="n">bmtfext</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">beamtimeid</span> <span class="ow">or</span> <span class="s2">&quot;00000000&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__skipAcquisitionModes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; find skip acquisition modes</span>
+    <span class="k">def</span> <span class="nf">__variableList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;NeXusWriterModes&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; read variable list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">skip_acq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">()</span><span class="o">.</span><span class="n">getEnv</span><span class="p">(</span><span class="s1">&#39;NeXusSkipAcquisitionModes&#39;</span><span class="p">)</span>
+            <span class="n">msvar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__macro</span><span class="p">()</span><span class="o">.</span><span class="n">getEnv</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-            <span class="n">skip_acq</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">skip_acq</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">skip_acq</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[-;,.\s]\s*&quot;</span><span class="p">,</span> <span class="n">skip_acq</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">skip_acq</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Skip Acquisition Modes: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">skip_acq</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">skip_acq</span>
+            <span class="n">msvar</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msvar</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">msvar</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[-;,.\s]\s*&quot;</span><span class="p">,</span> <span class="n">msvar</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">msvar</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">msvar</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">msvar</span>
 
     <span class="k">def</span> <span class="nf">__rawfilename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">serial</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; find scan name</span>
@@ -1470,7 +1484,7 @@
             <span class="n">sid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__serial</span>
             <span class="n">sname</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">::/</span><span class="si">%s</span><span class="s2">_</span><span class="si">%05i</span><span class="s2">;</span><span class="si">%s</span><span class="s2">_</span><span class="si">%05i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
                 <span class="n">scanname</span><span class="p">,</span> <span class="n">entryname</span><span class="p">,</span> <span class="n">sid</span><span class="p">,</span> <span class="n">scanname</span><span class="p">,</span> <span class="n">sid</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;INIT&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">skipAcquisitionModes</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;NOINIT&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">writerModes</span><span class="p">:</span>
             <span class="n">sname</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sname</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
 
         <span class="c1"># auto grouping</span>
