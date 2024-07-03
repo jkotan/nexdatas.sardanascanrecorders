@@ -26,7 +26,6 @@ import sys
 
 import numpy
 import json
-import pytz
 import time
 import weakref
 import socket
@@ -1175,8 +1174,16 @@ class NXS_FileRecorder(BaseFileRecorder):
         :returns: formatted time string
         :rtype: :obj:`str`
         """
+        fmt = '%Y-%m-%dT%H:%M:%S.%f%z'
         try:
-            tz = pytz.timezone(tzone)
+            if sys.version_info >= (3, 9):
+                import zoneinfo
+                tz = zoneinfo.ZoneInfo(tzone)
+                starttime = mtime.replace(tzinfo=tz)
+            else:
+                import pytz
+                tz = pytz.timezone(tzone)
+                starttime = tz.localize(mtime)
         except Exception:
             self.warning(
                 "Wrong TimeZone. "
@@ -1185,13 +1192,15 @@ class NXS_FileRecorder(BaseFileRecorder):
                 self.__macro().warning(
                     "Wrong TimeZone. "
                     "The time zone set to `%s`" % self.__timezone)
-            tz = pytz.timezone(self.__timezone)
+            if sys.version_info >= (3, 9):
+                import zoneinfo
+                tz = zoneinfo.ZoneInfo(self.__timezone)
+                starttime = mtime.replace(tzinfo=tz)
+            else:
+                import pytz
+                tz = pytz.timezone(self.__timezone)
+                starttime = tz.localize(mtime)
 
-        fmt = '%Y-%m-%dT%H:%M:%S.%f%z'
-        if sys.version_info > (3, 6):
-            starttime = mtime.replace(tzinfo=tz)
-        else:
-            starttime = tz.localize(mtime)
         return str(starttime.strftime(fmt))
 
     def _endRecordList(self, recordlist):
