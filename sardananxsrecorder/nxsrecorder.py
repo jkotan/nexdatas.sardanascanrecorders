@@ -1345,6 +1345,8 @@ class NXS_FileRecorder(BaseFileRecorder):
 
         sid = self.__serial
         fdir, fname = os.path.split(self.filename)
+        if bool(self.__getEnvVar("ScanFileInScanNameDir", False)):
+            fdir = os.path.dirname(os.path.abspath(fdir))
         sname, fext = os.path.splitext(fname)
         beamtimeid = self.beamtimeid()
         defprefix = "scicat-datasets-"
@@ -1416,6 +1418,8 @@ class NXS_FileRecorder(BaseFileRecorder):
 
         sid = self.__serial
         fdir, fname = os.path.split(self.filename)
+        if bool(self.__getEnvVar("ScanFileInScanNameDir", False)):
+            fdir = os.path.dirname(os.path.abspath(fdir))
         sname, fext = os.path.splitext(fname)
         # beamtimeid = self.beamtimeid()
 
