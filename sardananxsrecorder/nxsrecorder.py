@@ -1345,7 +1345,7 @@ class NXS_FileRecorder(BaseFileRecorder):
 
         sid = self.__serial
         fdir, fname = os.path.split(self.filename)
-        if bool(self.__getEnvVar("ScanFileInScanNameDir", False)):
+        if bool(self.__getEnvVar("ScanNames", False)):
             fdir = os.path.dirname(os.path.abspath(fdir))
         sname, fext = os.path.splitext(fname)
         beamtimeid = self.beamtimeid()
@@ -1418,7 +1418,7 @@ class NXS_FileRecorder(BaseFileRecorder):
 
         sid = self.__serial
         fdir, fname = os.path.split(self.filename)
-        if bool(self.__getEnvVar("ScanFileInScanNameDir", False)):
+        if bool(self.__getEnvVar("ScanNames", False)):
             fdir = os.path.dirname(os.path.abspath(fdir))
         sname, fext = os.path.splitext(fname)
         # beamtimeid = self.beamtimeid()
