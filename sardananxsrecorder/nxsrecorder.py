@@ -1316,11 +1316,13 @@ class NXS_FileRecorder(BaseFileRecorder):
         bfilename = bfilename or self.__base_filename
         return bfilename
 
-    def __scanname(self, serial):
+    def __scanname(self, serial, default=None):
         """ find scan name
         """
         if not self.__raw_filename:
             self.__raw_filename = self.__rawfilename(serial)
+        if default:
+            return default
         bfilename = self.__raw_filename
         _, bfname = os.path.split(bfilename)
         if bfname.endswith(".tmp"):
@@ -1345,8 +1347,14 @@ class NXS_FileRecorder(BaseFileRecorder):
 
         sid = self.__serial
         fdir, fname = os.path.split(self.filename)
-        if bool(self.__getEnvVar("ScanNames", False)):
-            fdir = os.path.dirname(os.path.abspath(fdir))
+        snmode = self.__getEnvVar("ScanNames", None)
+        appendentry = self.__getConfVar("AppendEntry", False)
+        pdir = None
+        if snmode is not None:
+            if bool(snmode):
+                fdir = os.path.dirname(os.path.abspath(fdir))
+            elif appendentry is False:
+                fdir, pdir = os.path.split(os.path.abspath(fdir))
         sname, fext = os.path.splitext(fname)
         beamtimeid = self.beamtimeid()
         defprefix = "scicat-datasets-"
@@ -1367,7 +1375,7 @@ class NXS_FileRecorder(BaseFileRecorder):
         if isinstance(variables, dict) and "entryname" in variables:
             entryname = variables["entryname"]
 
-        scanname = self.__scanname(sid)
+        scanname = self.__scanname(sid, pdir)
         # _, bfname = os.path.split(self.__base_filename)
         # try:
         #     scanname, _ = os.path.splitext(bfname % "")
@@ -1380,13 +1388,15 @@ class NXS_FileRecorder(BaseFileRecorder):
             sid = self.__serial
             sname = "%s::/%s_%05i;%s_%05i" % (
                 scanname, entryname, sid, scanname, sid)
+        if pdir:
+            sname = "%s/%s" % (pdir, sname)
         if "NOINIT" in self.writerModes:
             sname = "%s:%s" % (sname, time.time())
 
         # auto grouping
         grouping = bool(self.__getEnvVar('SciCatAutoGrouping', False))
 
-        if grouping:
+        if grouping or pdir:
             commands = []
             try:
                 sm = dict(self.__getEnvVar('SciCatMeasurements', {}))
@@ -1418,12 +1428,18 @@ class NXS_FileRecorder(BaseFileRecorder):
 
         sid = self.__serial
         fdir, fname = os.path.split(self.filename)
-        if bool(self.__getEnvVar("ScanNames", False)):
-            fdir = os.path.dirname(os.path.abspath(fdir))
+        pdir = None
+        snmode = self.__getEnvVar("ScanNames", None)
+        appendentry = self.__getConfVar("AppendEntry", False)
+        if snmode is not None:
+            if bool(snmode):
+                fdir = os.path.dirname(os.path.abspath(fdir))
+            elif appendentry is False:
+                fdir, pdir = os.path.split(os.path.abspath(fdir))
         sname, fext = os.path.splitext(fname)
         # beamtimeid = self.beamtimeid()
 
-        scanname = self.__scanname(sid)
+        scanname = self.__scanname(sid, pdir)
         # _, bfname = os.path.split(self.__base_filename)
         # try:
         #     scanname, _ = os.path.splitext(bfname % "")
@@ -1458,7 +1474,11 @@ class NXS_FileRecorder(BaseFileRecorder):
                 fl = h5writer.open_file(mntfile, readonly=False)
             rt = fl.root()
             if sname not in rt.names():
-                h5writer.link("%s:/%s" % (fname, entryname), rt, sname)
+                if pdir:
+                    h5writer.link("%s/%s:/%s" %
+                                  (pdir, fname, entryname), rt, sname)
+                else:
+                    h5writer.link("%s:/%s" % (fname, entryname), rt, sname)
                 self.debug("Link  '%s' in '%s' created " % (sname, mntname))
             rt.close()
             fl.close()
