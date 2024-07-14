@@ -1,7 +1,7 @@
 2024-07-15 Jan Kotanski <jankotan@gmail.com>
 	* fix ScanFileInScanNameDir variable name to ScanNames (#138)
-	* add support for ScanNames=False mode (#138)
-	* tagged as 3.28.0
+	* fix support for ScanNames=False mode (#138)
+	* tagged as 3.27.1
 
 2024-07-11 Jan Kotanski <jankotan@gmail.com>
 	* add support for ScanFileInScanNameDir variable (#135)
