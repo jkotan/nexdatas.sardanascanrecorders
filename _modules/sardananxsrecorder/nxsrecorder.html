@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>sardananxsrecorder.nxsrecorder &#8212; Sardana NeXus Recorder 3.26.1 documentation</title>
+    <title>sardananxsrecorder.nxsrecorder &#8212; Sardana NeXus Recorder 3.28.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css" />
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
@@ -37,7 +37,7 @@
         </button>
         <a class="navbar-brand" href="../../index.html">
           Sardana NeXus Recorder</a>
-        <span class="navbar-text navbar-version pull-left"><b>3.26</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>3.28</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -1422,11 +1422,13 @@
         <span class="n">bfilename</span> <span class="o">=</span> <span class="n">bfilename</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">__base_filename</span>
         <span class="k">return</span> <span class="n">bfilename</span>
 
-    <span class="k">def</span> <span class="nf">__scanname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">serial</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__scanname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">serial</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; find scan name</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__raw_filename</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__raw_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__rawfilename</span><span class="p">(</span><span class="n">serial</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">default</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">default</span>
         <span class="n">bfilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__raw_filename</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">bfname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">bfilename</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">bfname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tmp&quot;</span><span class="p">):</span>
@@ -1451,6 +1453,14 @@
 
         <span class="n">sid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__serial</span>
         <span class="n">fdir</span><span class="p">,</span> <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">snmode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getEnvVar</span><span class="p">(</span><span class="s2">&quot;ScanNames&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">appendentry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getConfVar</span><span class="p">(</span><span class="s2">&quot;AppendEntry&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">pdir</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">snmode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">snmode</span><span class="p">):</span>
+                <span class="n">fdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">fdir</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">appendentry</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="n">fdir</span><span class="p">,</span> <span class="n">pdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">fdir</span><span class="p">))</span>
         <span class="n">sname</span><span class="p">,</span> <span class="n">fext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
         <span class="n">beamtimeid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beamtimeid</span><span class="p">()</span>
         <span class="n">defprefix</span> <span class="o">=</span> <span class="s2">&quot;scicat-datasets-&quot;</span>
@@ -1471,7 +1481,7 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;entryname&quot;</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
             <span class="n">entryname</span> <span class="o">=</span> <span class="n">variables</span><span class="p">[</span><span class="s2">&quot;entryname&quot;</span><span class="p">]</span>
 
-        <span class="n">scanname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__scanname</span><span class="p">(</span><span class="n">sid</span><span class="p">)</span>
+        <span class="n">scanname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__scanname</span><span class="p">(</span><span class="n">sid</span><span class="p">,</span> <span class="n">pdir</span><span class="p">)</span>
         <span class="c1"># _, bfname = os.path.split(self.__base_filename)</span>
         <span class="c1"># try:</span>
         <span class="c1">#     scanname, _ = os.path.splitext(bfname % &quot;&quot;)</span>
@@ -1484,13 +1494,15 @@
             <span class="n">sid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__serial</span>
             <span class="n">sname</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">::/</span><span class="si">%s</span><span class="s2">_</span><span class="si">%05i</span><span class="s2">;</span><span class="si">%s</span><span class="s2">_</span><span class="si">%05i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
                 <span class="n">scanname</span><span class="p">,</span> <span class="n">entryname</span><span class="p">,</span> <span class="n">sid</span><span class="p">,</span> <span class="n">scanname</span><span class="p">,</span> <span class="n">sid</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pdir</span><span class="p">:</span>
+            <span class="n">sname</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pdir</span><span class="p">,</span> <span class="n">sname</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;NOINIT&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">writerModes</span><span class="p">:</span>
             <span class="n">sname</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sname</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
 
         <span class="c1"># auto grouping</span>
         <span class="n">grouping</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__getEnvVar</span><span class="p">(</span><span class="s1">&#39;SciCatAutoGrouping&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
 
-        <span class="k">if</span> <span class="n">grouping</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">grouping</span> <span class="ow">or</span> <span class="n">pdir</span><span class="p">:</span>
             <span class="n">commands</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">sm</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__getEnvVar</span><span class="p">(</span><span class="s1">&#39;SciCatMeasurements&#39;</span><span class="p">,</span> <span class="p">{}))</span>
@@ -1508,7 +1520,7 @@
             <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sname</span><span class="p">)</span>
             <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;__command__ stop&quot;</span><span class="p">)</span>
             <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">scanname</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()))</span>
-            <span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;__command__ start </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">scanname</span><span class="p">)</span>
+            <span class="c1"># commands.append(&quot;__command__ start %s&quot; % scanname)</span>
             <span class="n">sname</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span>
 
             <span class="n">sm</span><span class="p">[</span><span class="n">fdir</span><span class="p">]</span> <span class="o">=</span> <span class="n">scanname</span>
@@ -1522,10 +1534,18 @@
 
         <span class="n">sid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__serial</span>
         <span class="n">fdir</span><span class="p">,</span> <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">pdir</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">snmode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getEnvVar</span><span class="p">(</span><span class="s2">&quot;ScanNames&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">appendentry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getConfVar</span><span class="p">(</span><span class="s2">&quot;AppendEntry&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">snmode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">snmode</span><span class="p">):</span>
+                <span class="n">fdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">fdir</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">appendentry</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="n">fdir</span><span class="p">,</span> <span class="n">pdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">fdir</span><span class="p">))</span>
         <span class="n">sname</span><span class="p">,</span> <span class="n">fext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
         <span class="c1"># beamtimeid = self.beamtimeid()</span>
 
-        <span class="n">scanname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__scanname</span><span class="p">(</span><span class="n">sid</span><span class="p">)</span>
+        <span class="n">scanname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__scanname</span><span class="p">(</span><span class="n">sid</span><span class="p">,</span> <span class="n">pdir</span><span class="p">)</span>
         <span class="c1"># _, bfname = os.path.split(self.__base_filename)</span>
         <span class="c1"># try:</span>
         <span class="c1">#     scanname, _ = os.path.splitext(bfname % &quot;&quot;)</span>
@@ -1560,7 +1580,11 @@
                 <span class="n">fl</span> <span class="o">=</span> <span class="n">h5writer</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">mntfile</span><span class="p">,</span> <span class="n">readonly</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="n">rt</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">root</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">sname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rt</span><span class="o">.</span><span class="n">names</span><span class="p">():</span>
-                <span class="n">h5writer</span><span class="o">.</span><span class="n">link</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">:/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">entryname</span><span class="p">),</span> <span class="n">rt</span><span class="p">,</span> <span class="n">sname</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">pdir</span><span class="p">:</span>
+                    <span class="n">h5writer</span><span class="o">.</span><span class="n">link</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">:/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span>
+                                  <span class="p">(</span><span class="n">pdir</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">entryname</span><span class="p">),</span> <span class="n">rt</span><span class="p">,</span> <span class="n">sname</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">h5writer</span><span class="o">.</span><span class="n">link</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">:/</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">entryname</span><span class="p">),</span> <span class="n">rt</span><span class="p">,</span> <span class="n">sname</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Link  &#39;</span><span class="si">%s</span><span class="s2">&#39; in &#39;</span><span class="si">%s</span><span class="s2">&#39; created &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sname</span><span class="p">,</span> <span class="n">mntname</span><span class="p">))</span>
             <span class="n">rt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="n">fl</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
