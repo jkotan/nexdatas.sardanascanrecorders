@@ -1414,7 +1414,7 @@ class NXS_FileRecorder(BaseFileRecorder):
             commands.append(sname)
             commands.append("__command__ stop")
             commands.append("%s:%s" % (scanname, time.time()))
-            commands.append("__command__ start %s" % scanname)
+            # commands.append("__command__ start %s" % scanname)
             sname = "\n".join(commands)
 
             sm[fdir] = scanname
