@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>Welcome to sardananxsrecorder’s documentation! &#8212; Sardana NeXus Recorder 3.28.1 documentation</title>
+    <title>Welcome to sardananxsrecorder’s documentation! &#8212; Sardana NeXus Recorder 3.29.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -39,7 +39,7 @@
         </button>
         <a class="navbar-brand" href="#">
           Sardana NeXus Recorder</a>
-        <span class="navbar-text navbar-version pull-left"><b>3.28</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>3.29</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -287,6 +287,15 @@ for MacroServer to 3 and restart servers.</p>
 <li><p><strong>NeXusWriterProperties</strong> <em>(dict)</em> - a dictionary of TangoDataWriter (NXSDataWriter) properties (starting with a small letter)</p></li>
 <li><p><strong>NeXusMeshScanID</strong> <em>(int)</em> - ScanID used for composed scans e.g. mesh scan combined from many linear scans</p></li>
 <li><p><strong>NeXusWriterModes</strong> <em>(list)</em> - a list of strategy modes e.g. <code class="docutils literal notranslate"><span class="pre">NOINIT</span></code>, <code class="docutils literal notranslate"><span class="pre">NOSTEP</span></code>, <code class="docutils literal notranslate"><span class="pre">NOFINAL</span></code>, <code class="docutils literal notranslate"><span class="pre">MESH</span></code>, <code class="docutils literal notranslate"><span class="pre">VDS</span></code>  separated by commas</p></li>
+<li><p><strong>ScanNames</strong> <em>(bool)</em> - special mode of using ScanName directories i.e.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code>: the master file in the ScanName directory,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code>: the master file in the grouping ScanName directory (e.g. without ScanID),</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code> (or undefined):  standard mode where the master files are outside the ScanName directory</p></li>
+</ul>
+</li>
+<li><p><strong>ScanNamesNoGrouping</strong> <em>(bool)</em> - do not perform grouping when <code class="docutils literal notranslate"><span class="pre">ScanNames</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
+<li><p><strong>ScanNamesNoMetadata</strong> <em>(bool)</em> - do not perform master file metadata ingestion when <code class="docutils literal notranslate"><span class="pre">ScanNames</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
 </ul>
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
