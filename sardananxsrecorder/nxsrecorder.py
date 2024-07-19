@@ -1348,6 +1348,8 @@ class NXS_FileRecorder(BaseFileRecorder):
         sid = self.__serial
         fdir, fname = os.path.split(self.filename)
         snmode = self.__getEnvVar("ScanNames", None)
+        nometa = self.__getEnvVar("ScanNamesNoMetadata", False)
+        nogrouping = self.__getEnvVar("ScanNamesNoGrouping", False)
         appendentry = self.__getConfVar("AppendEntry", False)
         pdir = None
         if snmode is not None:
@@ -1406,22 +1408,28 @@ class NXS_FileRecorder(BaseFileRecorder):
             if fdir in sm.keys():
                 cgrp = sm[fdir]
                 if cgrp != scanname:
-                    commands.append("__command__ stop")
-                    commands.append("%s:%s" % (cgrp, time.time()))
-                    commands.append("__command__ start %s" % scanname)
+                    if not nogrouping and not nometa:
+                        commands.append("__command__ stop")
+                        commands.append("%s:%s" % (cgrp, time.time()))
+                        commands.append("__command__ start %s" % scanname)
             else:
-                commands.append("__command__ start %s" % scanname)
-            commands.append(sname)
-            commands.append("__command__ stop")
-            commands.append("%s:%s" % (scanname, time.time()))
-            # commands.append("__command__ start %s" % scanname)
+                if not nogrouping and not nometa:
+                    commands.append("__command__ start %s" % scanname)
+            if not nometa:
+                commands.append(sname)
+            if not nogrouping and not nometa:
+                commands.append("__command__ stop")
+            if not nogrouping:
+                commands.append("%s:%s" % (scanname, time.time()))
             sname = "\n".join(commands)
 
-            sm[fdir] = scanname
+            if not nogrouping and not nometa:
+                sm[fdir] = scanname
             self.__env['SciCatMeasurements'] = sm
 
-        with open(dslfile, "a+") as fl:
-            fl.write("\n%s" % sname)
+        if sname:
+            with open(dslfile, "a+") as fl:
+                fl.write("\n%s" % sname)
 
     def __createMeasurementFile(self):
         """ create measurement file """

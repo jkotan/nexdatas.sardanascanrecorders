@@ -1,3 +1,7 @@
+2024-07-19 Jan Kotanski <jankotan@gmail.com>
+	* add ScanNamesNoMetadata and ScanNamesNoGrouping variables (#145)
+	* tagged as 3.29.0
+
 2024-07-15 Jan Kotanski <jankotan@gmail.com>
 	* do not restart the measurement  in the grouping mode (#142)
 	* tagged as 3.28.1
