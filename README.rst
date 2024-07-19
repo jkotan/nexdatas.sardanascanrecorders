@@ -227,4 +227,10 @@ The NeXus file recorder uses the following sardana environment variables
 * **NeXusWriterProperties** *(dict)* - a dictionary of TangoDataWriter (NXSDataWriter) properties (starting with a small letter)
 * **NeXusMeshScanID** *(int)* - ScanID used for composed scans e.g. mesh scan combined from many linear scans
 * **NeXusWriterModes** *(list)* - a list of strategy modes e.g. ``NOINIT``, ``NOSTEP``, ``NOFINAL``, ``MESH``, ``VDS``  separated by commas
-  
+* **ScanNames** *(bool)* - special mode of using ScanName directories i.e.
+  * ``True``: the master file in ScanName directory,
+  * ``False``:  Themaster file in grouping ScanName directory,
+  * ``None`` (or undefined):  standard mode where the master files are outside ScanName directory
+* **ScanNamesNoGrouping** *(bool)* - do not perform grouping when ``ScanNames`` is ``False``
+* **ScanNamesNoMetadata** *(bool)* - do not perform master file metadata ingestion when ``ScanNames`` is ``False``
+ 
