@@ -229,11 +229,11 @@ The NeXus file recorder uses the following sardana environment variables
 * **NeXusWriterModes** *(list)* - a list of strategy modes e.g. ``NOINIT``, ``NOSTEP``, ``NOFINAL``, ``MESH``, ``VDS``  separated by commas
 * **ScanNames** *(bool)* - special mode of using ScanName directories i.e.
 
-  * ``True``: the master file in ScanName directory,
+  * ``True``: the master file in the ScanName directory,
 
-  * ``False``:  Themaster file in grouping ScanName directory,
+  * ``False``: the master file in the grouping ScanName directory (e.g. without ScanID),
 
-  * ``None`` (or undefined):  standard mode where the master files are outside ScanName directory
+  * ``None`` (or undefined):  standard mode where the master files are outside the ScanName directory
 
 * **ScanNamesNoGrouping** *(bool)* - do not perform grouping when ``ScanNames`` is ``False``
 * **ScanNamesNoMetadata** *(bool)* - do not perform master file metadata ingestion when ``ScanNames`` is ``False``
