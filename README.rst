@@ -49,7 +49,7 @@ Extract sources and run
 
 .. code-block:: console
 
-	  $ python setup.py install
+	  $ python3 setup.py install
 
 and add an *RecorderPath* property of *MacroServer* with its value
 defining the package location, e.g.
@@ -60,7 +60,7 @@ defining the package location, e.g.
 Debian packages
 """""""""""""""
 
-Debian Bookworm, Bullseye, Buster and Ubuntu Lunar, Jammy and Focal packages can be found in the HDRI repository.
+Debian Bookworm, Bullseye, Buster and Ubuntu Oracular, Noble Jammy packages can be found in the HDRI repository.
 
 To install the debian packages, add the PGP repository key
 
@@ -82,7 +82,7 @@ Finally, for python2.7
 .. code-block:: console
 
 	  $ apt-get update
-	  $ apt-get install python-sardana-nxsrecorder
+	  $ apt-get install python3-sardana-nxsrecorder
 
 and set the RecoderPath property of MacroServer with
 
@@ -90,33 +90,14 @@ and set the RecoderPath property of MacroServer with
 
 	  $ apt-get install sardana-nxsrecorder
 
-For python3
-
-.. code-block:: console
-
-	  $ apt-get update
-	  $ apt-get install python3-sardana-nxsrecorder
-	  $ apt-get install sardana-nxsrecorder3
 
 To instal other NexDaTaS packages
-
-.. code-block:: console
-
-	  $ apt-get install python-nxswriter nxsconfigserver-db python-nxsconfigserver nxsconfigtool python-nxstools nxswriter nxsconfigserver nxsrecselector
-
-or for python 3
 
 .. code-block:: console
 
 	  $ apt-get install python3-nxswriter nxsconfigserver-db python3-nxsconfigserver nxsconfigtool3 python3-nxstools nxswriter3 nxsconfigserver3
 
 and
-
-.. code-block:: console
-
-	  $ apt-get install python-nxsrecselector nxsrecselector nxselector
-
-or for python3
 
 .. code-block:: console
 
