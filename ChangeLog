@@ -1,3 +1,7 @@
+2024-12-11 Jan Kotanski <jankotan@gmail.com>
+	* reset SciCatMeasurements if not dict (#149)
+	* tagged as 3.29.1
+
 2024-07-19 Jan Kotanski <jankotan@gmail.com>
 	* add ScanNamesNoMetadata and ScanNamesNoGrouping variables (#145)
 	* tagged as 3.29.0
