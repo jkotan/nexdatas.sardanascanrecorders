@@ -1402,6 +1402,8 @@ class NXS_FileRecorder(BaseFileRecorder):
             commands = []
             try:
                 sm = dict(self.__getEnvVar('SciCatMeasurements', {}))
+                if not isinstance(sm, dict):
+                    sm = {}
             except Exception:
                 sm = {}
 
@@ -1456,6 +1458,8 @@ class NXS_FileRecorder(BaseFileRecorder):
 
         try:
             sm = dict(self.__getEnvVar('SciCatMeasurements', {}))
+            if not isinstance(sm, dict):
+                sm = {}
         except Exception:
             sm = {}
 
